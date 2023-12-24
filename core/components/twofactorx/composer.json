@@ -1,0 +1,28 @@
+{
+  "name": "treehillstudio/twofactorx",
+  "description": "Two-factor authentication for the MODX manager",
+  "authors": [
+    {
+      "name": "Thomas Jakobi",
+      "email": "office@treehillstudio.com",
+      "homepage": "https://treehillstudio.com"
+    }
+  ],
+  "license": "GPL-2.0-or-later",
+  "config": {
+    "platform": {
+      "php": "7.4"
+    }
+  },
+  "require": {
+    "php": ">=7.4",
+    "ext-openssl": "*",
+    "phpgangsta/googleauthenticator": "dev-master",
+    "endroid/qr-code": "^4.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "TreehillStudio\\TwoFactorX\\": "src/"
+    }
+  }
+}

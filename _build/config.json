@@ -1,0 +1,120 @@
+{
+  "name": "TwoFactorX",
+  "lowCaseName": "twofactorx",
+  "description": "Two-factor authentication for the MODX manager",
+  "author": "Thomas Jakobi",
+  "version": "1.0.0",
+  "package": {
+    "elements": {
+      "plugins": [
+        {
+          "name": "TwoFactorX",
+          "description": "Two-factor authentication for the MODX manager",
+          "file": "twofactorx.plugin.php",
+          "events": [
+            "OnBeforeManagerLogin",
+            "OnManagerLoginFormRender",
+            "OnManagerPageBeforeRender",
+            "OnUserDuplicate",
+            "OnUserFormPrerender",
+            "OnUserFormSave"
+          ]
+        }
+      ],
+      "snippets": [
+        {
+          "name": "TwoFactorXLogin",
+          "description": "Two-factor authentication pre-hook (for i.e. the Login extra)",
+          "file": "loginhook.hook.php",
+          "properties": [
+            {
+              "name": "twofactorxErrorMsg",
+              "value": ""
+            }
+          ]
+        },
+        {
+          "name": "UserQRcode",
+          "description": "Create a two-factor authentication QR-Code",
+          "file": "userqrcode.snippet.php",
+          "properties": [
+            {
+              "name": "userid",
+              "value": ""
+            },
+            {
+              "name": "placeholderPrefix",
+              "value": "twofactorx"
+            }
+          ]
+        }
+      ]
+    },
+    "systemSettings": [
+      {
+        "key": "debug",
+        "type": "combo-boolean",
+        "area": "system",
+        "value": "0"
+      },
+      {
+        "key": "enable_2fa",
+        "type": "combo-boolean",
+        "area": "system",
+        "value": "0"
+      },
+      {
+        "key": "enable_onetime",
+        "type": "combo-boolean",
+        "area": "system",
+        "value": "1"
+      },
+      {
+        "key": "show_in_profile",
+        "type": "combo-boolean",
+        "area": "system",
+        "value": "0"
+      },
+      {
+        "key": "issuer",
+        "area": "system",
+        "value": ""
+      },
+      {
+        "key": "encryption_key",
+        "type": "text-password",
+        "area": "system",
+        "value": "*"
+      }
+    ]
+  },
+  "dependencies": [
+    {
+      "name": "php",
+      "version": ">=7.4"
+    },
+    {
+      "name": "modx",
+      "version": ">=2.8"
+    }
+  ],
+  "build": {
+    "readme": "docs/readme.md",
+    "license": "docs/license.md",
+    "changelog": "docs/changelog.md",
+    "options": {
+      "composer": true
+    },
+    "setupOptions": {
+      "source": "setup.options.php"
+    },
+    "resolver": {
+      "after": [
+        "resolve.composer.php",
+        "resolve.setupoptions.php",
+        "resolve.permissions.php",
+        "resolve.treehillstudio.php"
+      ]
+    }
+  }
+}
