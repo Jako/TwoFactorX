@@ -14,7 +14,9 @@ a QR Code for saving the authenticator secret can be generated with a snippet.
 
 ## Fork
 
-This package is a fork and a complete rewrite of GoogleAuthenticatorX package. The reasons can be found on the [contributors]()
+This package is a fork and a complete rewrite of GoogleAuthenticatorX package.
+The reasons can be found on the [contributors]
+(https://jako.github.io/TwoFactorX/contributors/) page.
 
 ## Installation
 
