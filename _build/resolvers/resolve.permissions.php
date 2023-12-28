@@ -9,6 +9,25 @@
  * @var xPDOObject $object
  */
 
+$accessPolicies = [
+    [
+        'policy' => [
+            'name' => 'TwoFactorX',
+            'description' => 'TwoFactorX Access Policy with all attributes.',
+            'lexicon' => $options['namespace'] . ':permissions'
+        ],
+        'template' => [
+            'name' => 'TwoFactorXTemplate',
+            'description' => 'TwoFactorX Policy Template with all attributes.',
+            'lexicon' => $options['namespace'] . ':permissions',
+            'template_group' => '1'
+        ],
+        'permissions' => [
+            'twofactorx_edit', // modx->lexicon('twofactorx.permission.twofactorx_edit_desc');
+        ]
+    ]
+];
+
 /**
  * @param modX $modx
  * @param array $policy
@@ -102,25 +121,6 @@ function removeAccessPermission($modx, $policy, $template, $permission)
     }
     return true;
 }
-
-$accessPolicies = [
-    [
-        'policy' => [
-            'name' => 'TwoFactorX',
-            'description' => 'TwoFactorX Access Policy with all attributes.',
-            'lexicon' => $options['namespace'] . ':permissions'
-        ],
-        'template' => [
-            'name' => 'TwoFactorXTemplate',
-            'description' => 'TwoFactorX Policy Template with all attributes.',
-            'lexicon' => $options['namespace'] . ':permissions',
-            'template_group' => '1'
-        ],
-        'permissions' => [
-            'twofactorx_edit', // modx->lexicon('twofactorx.permission.twofactorx_edit_desc');
-        ]
-    ]
-];
 
 $success = true;
 if ($object->xpdo) {
