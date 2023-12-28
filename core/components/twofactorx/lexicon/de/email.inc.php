@@ -16,7 +16,7 @@ $_lang['twofactorx.notifyemail_body'] = '<p>Hallo [[+username]],</p>
 <h4>Einrichten der Anwendung</h4>
 <ol>
 <li>Öffnen Sie die Authentifizierungsanwendung.</li>
-<li>Um Ihr unterstütztes Gerät oder Ihre Anwendung mit Ihrem Konto zu verknüpfen, müssen Sie den QR-Code scannen oder den Namen und den geheimen Schlüssel in der Anwendung hinzufügen.</li>
+<li>Um Ihr unterstütztes Gerät oder Ihre Anwendung mit Ihrem Konto zu verknüpfen, müssen Sie den QR-Code scannen oder den Namen und das Secret in der Anwendung hinzufügen.</li>
 </ol>
 </div>';
 $_lang['twofactorx.notifyemail_subject'] = 'Die Zwei-Faktor-Authentifizierung bei der Anmeldung wurde aktiviert';

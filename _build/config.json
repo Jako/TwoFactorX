@@ -3,7 +3,7 @@
   "lowCaseName": "twofactorx",
   "description": "Two-factor authentication for the MODX manager",
   "author": "Thomas Jakobi",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "package": {
     "elements": {
       "plugins": [
@@ -113,6 +113,7 @@
         "resolve.composer.php",
         "resolve.setupoptions.php",
         "resolve.permissions.php",
+        "resolve.migrate.php",
         "resolve.treehillstudio.php"
       ]
     }

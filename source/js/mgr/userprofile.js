@@ -7,14 +7,10 @@ Ext.onReady(function () {
         anchor: '100%',
         id: 'twofactorx-qrcode',
         cls: 'x-form-item',
-        style: (TwoFactorX.config.modxversion === "2") ? '': 'margin-left: 0; margin-top: 12px;',
+        style: 'margin-left: 0',
         items: [{
-            xtype: 'label',
-            cls: 'x-form-item-label',
-            text: _('twofactorx.lbl_qrcode') + ':',
-            anchor: '50%'
-        }, {
             html: '<div id="qrcode"><img id="qrimg" src="" alt="' + _('twofactorx.lbl_qrcode') + '"/></div>',
+            fieldLabel: _('twofactorx.lbl_qrcode'),
             anchor: '50%'
         }, {
             xtype: 'field',
