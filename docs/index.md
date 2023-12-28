@@ -1,6 +1,6 @@
 # TwoFactorX
 
-Add a two-factor authentication to the MODX manager.
+Add a two-factor authentication to MODX.
 
 ### Requirements
 

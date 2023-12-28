@@ -32,7 +32,7 @@ The following additional placeholders are set by the snippet:
 | qrsvg       | The HTML code of an SVG that displays the QR code that can be scanned with an authentication application. |
 
 
-### System Settings
+## System Settings
 
 TwoFactorX uses the following system settings in the namespace `twofactorx`.
 
@@ -44,7 +44,8 @@ TwoFactorX uses the following system settings in the namespace `twofactorx`.
 | twofactorx.encryption_key  | Encryption Key                   | Encryption key that is used for the encryption of the 2FA data. Do not change.                                         | -       |
 | twofactorx.issuer          | QR Code Issuer                   | Specify the value of the issuer in the QR code. The default value is the system setting site_name.                     | -       |
 | twofactorx.show_in_profile | Show Secret In User Profile      | Allow manager users to see the QR code and the secret for two-factor authentication in their user profile.             | No      |
-### Permissions
+
+## Permissions
 
 TwoFactorX has the following permissions for manager users:
 

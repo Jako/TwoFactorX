@@ -2,6 +2,8 @@ The TwoFactorX project was started in 2023 by [Thomas
 Jakobi](https://github.com/jako) as a complete rewite of the GoogleAuthenticatorX
 package by [Mina Gerges](https://github.com/minagerges).
 
+## Reasons for the fork
+
 The primary reason for the rewrite was the usage of an external service to
 create the QR code. This is insecure and should not be used for sites, where
 absolute security is needed. The current code uses an internal QR code
