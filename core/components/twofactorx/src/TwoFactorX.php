@@ -2,6 +2,7 @@
 /**
  * TwoFactorX
  *
+ * Copyright 2014-2023 by Mina Gerges <gerges.mina@gmail.com>
  * Copyright 2023-2024 by Thomas Jakobi <office@treehillstudio.com>
  *
  * @package twofactorx
