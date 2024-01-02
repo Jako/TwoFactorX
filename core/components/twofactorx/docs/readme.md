@@ -41,7 +41,7 @@ https://github.com/Jako/TwoFactorX
 ## Translations
 
 Translations of TwoFactorX can be made on
-[Weblate](https://hosted.weblate.org/projects/modx-extras/)
+[Weblate](https://hosted.weblate.org/projects/modx-extras/twofactorx/)
 
 ## Third party licenses
 

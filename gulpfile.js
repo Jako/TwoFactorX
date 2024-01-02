@@ -109,7 +109,7 @@ const bumpDocs = function () {
     return gulp.src([
         'mkdocs.yml',
     ], {base: './'})
-        .pipe(replace(/&copy; 2023(-\d{4})?/g, '&copy; ' + (year > 2023 ? '2018-' : '') + year))
+        .pipe(replace(/&copy; 2023(-\d{4})?/g, '&copy; ' + (year > 2023 ? '2023-' : '') + year))
         .pipe(gulp.dest('.'));
 };
 gulp.task('bump', gulp.series(bumpCopyright, bumpVersion, bumpDocs));
