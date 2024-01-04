@@ -1,7 +1,12 @@
 {
   "name": "treehillstudio/twofactorx",
-  "description": "Two-factor authentication for the MODX manager",
+  "description": "Two-factor authentication for MODX",
   "authors": [
+    {
+      "name": "Mina Gerges",
+      "email": "mina@minagerges.com",
+      "homepage": "https://www.minagerges.com"
+    },
     {
       "name": "Thomas Jakobi",
       "email": "office@treehillstudio.com",

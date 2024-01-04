@@ -1,7 +1,7 @@
 {
   "name": "TwoFactorX",
   "lowCaseName": "twofactorx",
-  "description": "Two-factor authentication for the MODX manager",
+  "description": "Two-factor authentication for MODX",
   "author": "Thomas Jakobi",
   "version": "1.0.1",
   "package": {
@@ -9,7 +9,7 @@
       "plugins": [
         {
           "name": "TwoFactorX",
-          "description": "Two-factor authentication for the MODX manager",
+          "description": "Two-factor authentication for MODX",
           "file": "twofactorx.plugin.php",
           "events": [
             "OnBeforeManagerLogin",

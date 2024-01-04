@@ -1,6 +1,6 @@
 {
   "name": "agenda",
-  "description": "Calendar management for MODX",
+  "description": "Two-factor authentication for MODX",
   "author": "Thomas Jakobi <office@treehillstudio.com>",
   "private": true,
   "devDependencies": {
