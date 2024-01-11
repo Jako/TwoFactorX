@@ -33,7 +33,7 @@ class TwoFactorXEmailSecretProcessor extends Processor
                 ->writerOptions([
                     SvgWriter::WRITER_OPTION_EXCLUDE_XML_DECLARATION => true
                 ])
-                ->data($this->twofactorx->ga->getUri($settings['accountname'], $settings['secret'], $settings['issuer']))
+                ->data($this->twofactorx->getUri($settings['accountname'], $settings['secret'], $settings['issuer']))
                 ->encoding(new Encoding('UTF-8'))
                 ->errorCorrectionLevel(new ErrorCorrectionLevelMedium())
                 ->size(200)

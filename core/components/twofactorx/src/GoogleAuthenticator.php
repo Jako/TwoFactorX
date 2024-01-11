@@ -24,15 +24,4 @@ class GoogleAuthenticator extends PHPGangsta_GoogleAuthenticator
             return false;
         }
     }
-
-    /**
-     * @param $accountname
-     * @param $secret
-     * @param $issuer
-     * @return string
-     */
-    public function getUri($accountname, $secret, $issuer)
-    {
-        return urlencode('otpauth://totp/' . $accountname . '?secret=' . $secret . '&issuer=' . $issuer);
-    }
 }

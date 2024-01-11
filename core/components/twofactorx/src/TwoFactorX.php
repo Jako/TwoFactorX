@@ -40,7 +40,7 @@ class TwoFactorX
      * The version
      * @var string $version
      */
-    public string $version = '1.0.1';
+    public string $version = '1.0.2';
 
     /**
      * The class options
@@ -331,7 +331,7 @@ class TwoFactorX
             }
             $this->userStatus = $this->getUserStatus();
             $this->userOnetimeStatus = $this->getUserOnetimeStatus();
-            $this->userSettings['uri'] = $this->ga->getUri($this->userName, $this->userSettings['secret'], $this->getOption('issuer'));
+            $this->userSettings['uri'] = $this->getUri($this->userName, $this->userSettings['secret'], $this->getOption('issuer'));
             if ($this->getOption('debug')) {
                 $this->modx->log(xPDO::LOG_LEVEL_ERROR, "Data loaded for user: $this->userName ($this->userId)", '', 'TwoFactorX');
             }
@@ -396,7 +396,7 @@ class TwoFactorX
             $username = $this->user->get('username');
 
             $secret = $this->ga->createSecret();
-            $uri = $this->ga->getUri($username, $secret, $this->getOption('issuer'));
+            $uri = $this->getUri($username, $secret, $this->getOption('issuer'));
             $this->userIV = $this->generateIV();
             $this->userSettings = [
                 'inonetime' => $this->isOnetimeEnabled() ? 'yes' : 'no',
@@ -590,5 +590,16 @@ class TwoFactorX
     {
         $ivlen = openssl_cipher_iv_length($this->cipherMethod);
         return openssl_random_pseudo_bytes($ivlen);
+    }
+
+    /**
+     * @param $accountname
+     * @param $secret
+     * @param $issuer
+     * @return string
+     */
+    public function getUri($accountname, $secret, $issuer)
+    {
+        return 'otpauth://totp/' . urlencode($accountname) . '?secret=' . $secret . '&issuer=' . urlencode($issuer);
     }
 }

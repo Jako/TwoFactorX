@@ -18,10 +18,10 @@ field with the name `code`.
 
 This snippet creates a two-factor authentication QR code. It uses the following properties:
 
-| Property          | Description                                         | Default        |
-|-------------------|-----------------------------------------------------|----------------|
-| placeholderPrefix | The prefix for the placeholders set by the snippet. | twofactorx     |
-| userid            | The id of the user the QR code is created for.      | Current user - |
+| Property          | Description                                         | Default         |
+|-------------------|-----------------------------------------------------|-----------------|
+| placeholderPrefix | The prefix for the placeholders set by the snippet. | twofactorx      |
+| userid            | The id of the user the QR code is created for.      | Current user id |
 
 The following additional placeholders are set by the snippet:
 
@@ -30,7 +30,6 @@ The following additional placeholders are set by the snippet:
 | secret      | The secret used to create a time-based one-time password (TOTP) in an authentication application.         |
 | uri         | The URI used to create the QR code for an authentication application.                                     |
 | qrsvg       | The HTML code of an SVG that displays the QR code that can be scanned with an authentication application. |
-
 
 ## System Settings
 
@@ -52,3 +51,5 @@ TwoFactorX has the following permissions for manager users:
 | Permission      | Description                                                    |                                                                                                                   
 |-----------------|----------------------------------------------------------------|
 | twofactorx_edit | Allow a user to manage the TwoFactorX data the user edit page. |
+
+The permission check is not executed for sudo users.

@@ -32,7 +32,7 @@ class TwoFactorXQRCodeGetProcessor extends Processor
         $result = Builder::create()
             ->writer(new SvgWriter())
             ->writerOptions([])
-            ->data($this->twofactorx->ga->getUri($accountname, $secret, $issuer))
+            ->data($this->twofactorx->getUri($accountname, $secret, $issuer))
             ->encoding(new Encoding('UTF-8'))
             ->errorCorrectionLevel(new ErrorCorrectionLevelMedium())
             ->size(200)
