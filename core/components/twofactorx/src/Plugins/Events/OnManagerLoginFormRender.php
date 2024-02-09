@@ -17,7 +17,7 @@ class OnManagerLoginFormRender extends Plugin
             $output = '<div class="x-form-item login-form-item" style="clear:left; padding-top: 10px">'
                 . '<label for="modx-login-code">' . $this->modx->lexicon('twofactorx.authkey') . '</label>'
                 . '<div class="x-form-element login-form-element">'
-                . '<input type="text" name="code" id="modx-login-code" value="" tabindex="2" autocomplete="off" maxlength="6" class="x-form-text x-form-field"/>'
+                . '<input type="text" name="code" id="modx-login-code" value="" tabindex="2" autocomplete="one-time-code" maxlength="6" class="x-form-text x-form-field"/>'
                 . '</div>'
                 . '</div>';
             $this->modx->event->_output = $output;
