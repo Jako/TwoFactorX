@@ -12,7 +12,9 @@ login snippet. It uses the following properties:
 | twofactorxErrorMsg | Alternative error message, if the authentication code does not match. | -       |
 
 The authentication code for the two-factor authentication is requested in the
-field with the name `code`.
+field with the name `code`. If you add the attribute
+`autocomplete="one-time-code"` to the input, tools like 1Password will fill the
+field automatically.
 
 ### UserQRcode
 
