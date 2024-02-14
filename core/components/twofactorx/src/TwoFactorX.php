@@ -40,7 +40,7 @@ class TwoFactorX
      * The version
      * @var string $version
      */
-    public string $version = '1.0.3';
+    public string $version = '1.0.4';
 
     /**
      * The class options
@@ -220,7 +220,7 @@ class TwoFactorX
     {
         $profile = $this->user->getOne('Profile');
         $extended = $profile->get('extended');
-        if ($extended['twofactorx']) {
+        if (isset($extended['twofactorx'])) {
             $extended['twofactorx'] = null;
             $profile->set('extended', $extended);
             $profile->save();
@@ -309,7 +309,7 @@ class TwoFactorX
         $profile = $this->user->getOne('Profile');
         $extended = $profile->get('extended');
         $userSettings = null;
-        if (is_array($extended) && array_key_exists('twofactorx', $extended) && is_array($extended['twofactorx'])) {
+        if (is_array($extended) && isset($extended['twofactorx']) && is_array($extended['twofactorx'])) {
             $userSettings = $extended['twofactorx'];
         }
         if (is_array($userSettings)) { // extended field container in place, we load settings.
@@ -526,10 +526,10 @@ class TwoFactorX
     private function getDecryptedArray($array): array
     {
         return [
-            'inonetime' => $this->decrypt($array['inonetime']),
-            'secret' => $this->decrypt($array['secret']),
-            'uri' => $this->decrypt($array['uri']),
-            'iv' => $array['iv'],
+            'inonetime' => $this->decrypt($this->getOption('inonetime', $array, '')),
+            'secret' => $this->decrypt($this->getOption('secret', $array, '')),
+            'uri' => $this->decrypt($this->getOption('uri', $array, '')),
+            'iv' => $this->getOption('iv', $array, ''),
         ];
     }
 
