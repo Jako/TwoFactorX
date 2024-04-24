@@ -5,11 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.5] - 2024-04-24
+
+### Added
+
+- Check the code in the TwoFactorXLogin hook only, when the user has to use the two-factor authentication.
+- Show the QR code only with the UserQRcode snippet, when the user can use the two-factor authentication.
+
+### Fixed
+
+- Fix the return value of the TwoFactorXLogin hook.
+
 ## [1.0.4] - 2024-02-14
 
 ### Fixed
 
-- Fix undefined array key warning 
+- Fix undefined array key warning
 
 ## [1.0.3] - 2024-02-10
 

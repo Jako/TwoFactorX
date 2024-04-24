@@ -52,17 +52,18 @@ class UserQRCodeSnippet extends Snippet
 
         $this->twofactorx->loadUserByID($userid);
         $settings = $this->twofactorx->getDecryptedSettings();
-        if ($settings) {
+        if ($settings && $this->twofactorx->userName && $settings['secret']) {
             $settings = array_merge($settings, [
                 'accountname' => $this->twofactorx->userName,
                 'issuer' => $this->twofactorx->getOption('issuer'),
             ]);
+            $uri = $this->twofactorx->getUri($settings['accountname'], $settings['secret'], $settings['issuer']);
             $qrcode = Builder::create()
                 ->writer(new SvgWriter())
                 ->writerOptions([
                     SvgWriter::WRITER_OPTION_EXCLUDE_XML_DECLARATION => true
                 ])
-                ->data($this->twofactorx->getUri($settings['accountname'], $settings['secret'], $settings['issuer']))
+                ->data($uri)
                 ->encoding(new Encoding('UTF-8'))
                 ->errorCorrectionLevel(new ErrorCorrectionLevelMedium())
                 ->size(200)
@@ -70,8 +71,6 @@ class UserQRCodeSnippet extends Snippet
                 ->roundBlockSizeMode(new RoundBlockSizeModeNone())
                 ->build();
             $qrsvg = $qrcode->getString();
-
-            $uri = $this->twofactorx->getUri($settings['accountname'], $settings['secret'], $settings['issuer']);
 
             $this->modx->setPlaceholders([
                 'secret' => $settings['secret'],

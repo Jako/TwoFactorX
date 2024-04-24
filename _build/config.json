@@ -3,7 +3,7 @@
   "lowCaseName": "twofactorx",
   "description": "Two-factor authentication for MODX",
   "author": "Thomas Jakobi",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "package": {
     "elements": {
       "plugins": [
@@ -35,7 +35,7 @@
         },
         {
           "name": "UserQRcode",
-          "description": "Create a two-factor authentication QR-Code",
+          "description": "Show a two-factor authentication QR-Code",
           "file": "userqrcode.snippet.php",
           "properties": [
             {
@@ -44,6 +44,10 @@
             },
             {
               "name": "placeholderPrefix",
+              "value": "twofactorx"
+            },
+            {
+              "name": "checkUser",
               "value": "twofactorx"
             }
           ]

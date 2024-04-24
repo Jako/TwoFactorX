@@ -44,16 +44,20 @@ class LoginHook extends Hook
         if (empty($username)) {
             return false;
         }
-        if (empty($code)) {
-            $errorMsg = $this->modx->lexicon('twofactorx.enterkey');
-            $this->hook->addError('code', $errorMsg);
-        }
-
         $this->twofactorx->loadUserByName($username);
-        if (!$this->twofactorx->userCodeMatch($code)) {
-            $this->hook->addError('user', $this->getProperty('errorMsg'));
+
+        $settings = $this->twofactorx->getDecryptedSettings();
+        if (!$settings['totp_disabled'] && $settings['inonetime'] == 'yes') {
+            if (empty($code)) {
+                $errorMsg = $this->modx->lexicon('twofactorx.enterkey');
+                $this->hook->addError('code', $errorMsg);
+            }
+
+            if (!$this->twofactorx->userCodeMatch($code)) {
+                $this->hook->addError('user', $this->getProperty('errorMsg'));
+            }
         }
 
-        return $this->hook->hasErrors();
+        return !$this->hook->hasErrors();
     }
 }
