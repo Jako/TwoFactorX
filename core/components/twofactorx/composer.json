@@ -22,6 +22,7 @@
   "require": {
     "php": ">=7.4",
     "ext-openssl": "*",
+    "ext-json": "*",
     "phpgangsta/googleauthenticator": "dev-master",
     "endroid/qr-code": "^4.6"
   },
