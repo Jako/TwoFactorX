@@ -44,7 +44,7 @@ class TwoFactorXEmailSecretProcessor extends Processor
                 ->build();
             $qrsvg = $qrcode->getString();
 
-            $qrcodeBase64 = 'data:image/svg+xml;base64,' . base64_encode($qrsvg);
+            $qrcodeDataUri = 'data:image/svg+xml,' . rawurlencode($qrsvg);
 
             $user = $this->modx->getObject('modUser', $userid);
             $mgrLanguage = $user->getOption('manager_language');
@@ -56,7 +56,7 @@ class TwoFactorXEmailSecretProcessor extends Processor
             $body = $this->modx->lexicon('twofactorx.qremail_body', [
                 'username' => $this->twofactorx->userName,
                 'secret' => $settings['secret'],
-                'qrsvg' => '<img src="' . $qrcodeBase64 . '" alt="QR Code" />',
+                'qrsvg' => $qrcodeDataUri,
             ]);
 
             $body = '<html><body>' . $body . '</body></html>';
