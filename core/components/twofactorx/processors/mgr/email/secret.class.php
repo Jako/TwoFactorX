@@ -23,11 +23,13 @@ class TwoFactorXEmailSecretProcessor extends Processor
 
         $this->twofactorx->loadUserByID($userid);
         $settings = $this->twofactorx->getDecryptedSettings();
+
         if ($settings) {
             $settings = array_merge($settings, [
                 'accountname' => $this->twofactorx->userName,
                 'issuer' => $this->twofactorx->getOption('issuer'),
             ]);
+
             $qrcode = Builder::create()
                 ->writer(new SvgWriter())
                 ->writerOptions([
@@ -44,20 +46,26 @@ class TwoFactorXEmailSecretProcessor extends Processor
 
             $user = $this->modx->getObject('modUser', $userid);
             $mgrLanguage = $user->getOption('manager_language');
-            $mgrLanguage = $mgrLanguage ?:  $this->modx->getOption('cultureKey');
+            $mgrLanguage = $mgrLanguage ?: $this->modx->getOption('cultureKey');
+
             $this->modx->lexicon->load($mgrLanguage . ':twofactorx:email');
             $subject = $this->modx->lexicon('twofactorx.qremail_subject');
+
             $body = $this->modx->lexicon('twofactorx.qremail_body', [
                 'username' => $this->twofactorx->userName,
                 'secret' => $settings['secret'],
-                'qrsvg' => $qrsvg,
-                ]);
+                'qrsvg' => 'data:image/svg+xml,' . rawurlencode($qrsvg),
+            ]);
+
             $body = '<html><body>' . $body . '</body></html>';
+
             if (!$user->sendEmail($body, [
                 'subject' => $subject
             ])) {
-                return $this->modx->error->failure($this->modx->lexicon('twofactorx.email_fail') . $this->modx->mail->mailer->ErrorInfo);
+                $errorInfo = $this->modx->mail->mailer->ErrorInfo;
+                return $this->modx->error->failure($this->modx->lexicon('twofactorx.email_fail') . $errorInfo);
             }
+
             return $this->modx->error->success($this->modx->lexicon('twofactorx.email_success'));
         } else {
             return $this->modx->error->failure($this->modx->lexicon('twofactorx.invaliddata'));

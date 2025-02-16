@@ -48,6 +48,6 @@ Translations of TwoFactorX can be made on
 This extra includes third party software, for which we are thankful.
 
 * bacon/bacon-qr-code@2.0.8 [BSD-2-Clause]
-* dasprid/enum@1.0.5 [BSD-2-Clause]
+* dasprid/enum@1.0.6 [BSD-2-Clause]
 * endroid/qr-code@4.6.1 [MIT]
 * phpgangsta/googleauthenticator@dev-master 505c2af [BSD-4-Clause]

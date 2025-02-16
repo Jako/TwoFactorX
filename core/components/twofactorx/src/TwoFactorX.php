@@ -3,7 +3,7 @@
  * TwoFactorX
  *
  * Copyright 2014-2023 by Mina Gerges <gerges.mina@gmail.com>
- * Copyright 2023-2024 by Thomas Jakobi <office@treehillstudio.com>
+ * Copyright 2023-2025 by Thomas Jakobi <office@treehillstudio.com>
  *
  * @package twofactorx
  * @subpackage classfile
@@ -40,7 +40,7 @@ class TwoFactorX
      * The version
      * @var string $version
      */
-    public string $version = '1.0.6';
+    public string $version = '1.0.7';
 
     /**
      * The class options
