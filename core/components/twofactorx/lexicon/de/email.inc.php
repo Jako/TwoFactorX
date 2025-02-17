@@ -22,6 +22,5 @@ $_lang['twofactorx.notifyemail_body'] = '<p>Hallo [[+username]],</p>
 $_lang['twofactorx.notifyemail_subject'] = 'Die Zwei-Faktor-Authentifizierung bei der Anmeldung wurde aktiviert';
 $_lang['twofactorx.qremail_body'] = '<p>Hallo [[+username]],</p>
 <p>Um die Zwei-Faktor-Authentifizierung zu nutzen, benötigen Sie ein unterstütztes Gerät oder eine Anwendung, die ein zeitbasiertes Einmal-Passwort (TOTP) zu generieren, z. B. Google Authenticator, Authy oder 1Password. Öffnen Sie die Authentifizierungsanwendung und scannen den bereitgestellten QR-Code. Sobald dieser Vorgang erfolgreich abgeschlossen ist, wird in der Authentifizierungsanwendung alle 30 Sekunden ein neuer Authentifizierungsschlüssel angezeigt. Dieser Schlüssel wird nun beim Einloggen benötigt.</p>
-<p><img src="[[+qrsvg]]" alt="QR Code"/></p>
 <p>Secret: [[+secret]]</p>';
 $_lang['twofactorx.qremail_subject'] = 'Ihr QR-Code für die Zwei-Faktor-Authentifizierung';

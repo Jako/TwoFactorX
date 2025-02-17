@@ -22,6 +22,5 @@ $_lang['twofactorx.notifyemail_body'] = '<p>Hello [[+username]],</p>
 $_lang['twofactorx.notifyemail_subject'] = 'Two-factor authentication has been activated in the login';
 $_lang['twofactorx.qremail_body'] = '<p>Hello [[+username]],</p>
 <p>To use the two-factor authentication, you need a supported device or application that can generate a time-based one-time password, e.g. Google Authenticator, Authy or 1Password. Open the authentication application and scan the QR code provided. Once this process has been successfully completed, a new authentication key will be displayed in the authentication application every 30 seconds. This key is now required when logging in.</p>
-<p><img src="[[+qrsvg]]" alt="QR Code"/></p>
 <p>Secret: [[+secret]]</p>';
 $_lang['twofactorx.qremail_subject'] = 'Your Two-factor authentication QR-code';
