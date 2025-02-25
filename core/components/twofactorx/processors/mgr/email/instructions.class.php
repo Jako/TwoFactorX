@@ -20,8 +20,8 @@ class TwoFactorXEmailInstructionsProcessor extends Processor
         $settings = $this->twofactorx->getDecryptedSettings();
         if ($settings) {
             $user = $this->modx->getObject('modUser', $userid);
-            $mgrLanguage = $user->getOption('manager_language');
-            $mgrLanguage = $mgrLanguage ?:  $this->modx->getOption('cultureKey');
+            $mgrLanguage = $this->modx->getOption('cultureKey');
+            $mgrLanguage = $mgrLanguage ?: $user->getOption('manager_language');
             $this->modx->lexicon->load($mgrLanguage . ':twofactorx:email');
             $subject = $this->modx->lexicon('twofactorx.notifyemail_subject');
             $body = $this->modx->lexicon('twofactorx.notifyemail_body', [
