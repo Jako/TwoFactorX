@@ -47,8 +47,8 @@ class TwoFactorXEmailSecretProcessor extends Processor
             file_put_contents($tempFile, $qrcode->getString());
 
             $user = $this->modx->getObject('modUser', $userid);
-            $mgrLanguage = $user->getOption('manager_language');
-            $mgrLanguage = $mgrLanguage ?: $this->modx->getOption('cultureKey');
+            $mgrLanguage = $this->modx->getOption('cultureKey');
+            $mgrLanguage = $mgrLanguage ?: $user->getOption('manager_language');
 
             $this->modx->lexicon->load($mgrLanguage . ':twofactorx:email');
             $subject = $this->modx->lexicon('twofactorx.qremail_subject');
