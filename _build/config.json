@@ -3,7 +3,7 @@
   "lowCaseName": "twofactorx",
   "description": "Two-factor authentication for MODX",
   "author": "Thomas Jakobi",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "package": {
     "elements": {
       "plugins": [
