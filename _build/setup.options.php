@@ -46,7 +46,7 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
                         <p class="red"><strong>Caution:</strong> Sending emails to all manager users can lead to a timeout in the installation process, depending on the number of users.</p>
                         <br/>
                         <input type="hidden" name="enable_2fa" value="0">
-                        <input type="checkbox" name="enable_2fa" id="enable_2fa" ' . (($defaults['enable_totp']) ? 'checked' : '') . ' value="1"> 
+                        <input type="checkbox" name="enable_2fa" id="enable_2fa" ' . (($defaults['enable_2fa']) ? 'checked' : '') . ' value="1"> 
                         <label for="enable_2fa" style="display: inline;">Enable two-factor authentication</label>
                         <p class="red">If you enable two-factor authentication, be ready with your mobile device for setting up the TOTP secret for this manager login, otherwise you will lose your login session.</p>
                     </div>';
