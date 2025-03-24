@@ -123,7 +123,7 @@ class TwoFactorX
             'enable_onetime' => $this->getBooleanOption('enable_onetime', [], true),
             'show_in_profile' => $this->getBooleanOption('show_in_profile', [], false),
             'issuer' => $this->modx->getOption($this->namespace . '.issuer', null, $this->modx->getOption('site_name'), true),
-            'encryption_key' => $this->modx->getOption($this->namespace . '.encryption_key', null, $this->modx->lexicon('agenda.manager_date_format')),
+            'encryption_key' => $this->modx->getOption($this->namespace . '.encryption_key', null, '*'),
         ]);
 
         $this->ga = new GoogleAuthenticator();
