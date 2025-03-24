@@ -20,8 +20,8 @@ class TwoFactorXEmailInstructionsProcessor extends Processor
         $settings = $this->twofactorx->getDecryptedSettings();
         if ($settings) {
             $user = $this->modx->getObject('modUser', $userid);
-            $mgrLanguage = $user->getOption('manager_language');
-            $mgrLanguage = $mgrLanguage ?:  $this->modx->getOption('cultureKey');
+            $mgrLanguage = $this->getUserSetting($user->get('id'), 'manager_language');
+            $mgrLanguage = $mgrLanguage ??  $this->modx->getOption('cultureKey');
             $this->modx->lexicon->load($mgrLanguage . ':twofactorx:email');
             $subject = $this->modx->lexicon('twofactorx.notifyemail_subject');
             $body = $this->modx->lexicon('twofactorx.notifyemail_body', [
@@ -37,6 +37,21 @@ class TwoFactorXEmailInstructionsProcessor extends Processor
         } else {
             return $this->modx->error->failure($this->modx->lexicon('twofactorx.invaliddata'));
         }
+    }
+
+    /**
+     * @param string $userId
+     * @param string $settingKey
+     * @return string|null
+     */
+    private function getUserSetting($userId, $settingKey)
+    {
+        /** @var modUserSetting $userSetting */
+        $userSetting = $this->modx->getObject('modUserSetting', [
+            'user' => $userId,
+            'key' => $settingKey,
+        ]);
+        return ($userSetting) ? $userSetting->get('value') : null;
     }
 }
 
