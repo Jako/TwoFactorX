@@ -23,25 +23,25 @@ Ext.onReady(function () {
                         items: [{
                             xtype: 'button',
                             cls: 'primary-button',
-                            text: _('twofactorx.btn_changestatus'),
+                            text: _('twofactorx.changestatus'),
                             id: 'twofactorx-btn-changestatus',
                             handler: TwoFactorX.util.changeStatus
                         }, {
                             xtype: 'button',
                             cls: 'primary-button',
-                            text: _('twofactorx.btn_resetsecret'),
+                            text: _('twofactorx.resetsecret'),
                             id: 'twofactorx-btn-resetsecret',
                             handler: TwoFactorX.util.resetSecret
                         }, {
                             xtype: 'button',
                             cls: 'primary-button',
-                            text: _('twofactorx.btn_emailinstructions'),
+                            text: _('twofactorx.emailinstructions'),
                             id: 'twofactorx-btn-emailinstructions',
                             handler: TwoFactorX.util.emailInstructions
                         }, {
                             xtype: 'button',
                             cls: 'primary-button',
-                            text: _('twofactorx.btn_emailqr'),
+                            text: _('twofactorx.emailqr'),
                             id: 'twofactorx-btn-emailqr',
                             handler: TwoFactorX.util.emailQR
                         }],
@@ -55,21 +55,21 @@ Ext.onReady(function () {
                         anchor: '100%',
                         items: [{
                             xtype: 'field',
-                            fieldLabel: _('twofactorx.lbl_status'),
+                            fieldLabel: _('twofactorx.status'),
                             id: 'twofactorx-status',
                             submitValue: false,
                             readOnly: true,
                             anchor: '100%'
                         }, {
                             xtype: 'field',
-                            fieldLabel: _('twofactorx.lbl_secret'),
+                            fieldLabel: _('twofactorx.secret'),
                             id: 'twofactorx-secret',
                             submitValue: false,
                             readOnly: true,
                             anchor: '100%'
                         }, {
                             xtype: 'field',
-                            fieldLabel: _('twofactorx.lbl_uri'),
+                            fieldLabel: _('twofactorx.uri'),
                             id: 'twofactorx-uri',
                             submitValue: false,
                             readOnly: true,
@@ -82,26 +82,24 @@ Ext.onReady(function () {
                     items: [{
                         xtype: 'panel',
                         anchor: '100%',
-                        id: 'twofactorx-qrcode',
                         cls: 'x-form-item',
                         style: 'padding-left: 15px',
                         items: [{
                             xtype: 'label',
                             cls: 'x-form-item-label',
-                            text: _('twofactorx.lbl_qrcode') + ':',
+                            text: _('twofactorx.qrcode') + ':',
                             style: 'padding-top: 0',
                             anchor: '100%'
                         }, {
-                            html: '<div id="qrcode"><img id="qrimg" src="" alt="' + _('twofactorx.lbl_qrcode') + '"/></div>'
+                            html: '<div><img class="twofactorx-loading" id="twofactorx-qrcode" src="" alt="' + _('twofactorx.qrcode') + '"/></div>'
                         }]
                     }]
                 }]
             }]
         }],
         listeners: {
-            afterlayout: {
-                fn: TwoFactorX.util.getUserSettings,
-                scope: this
+            afterlayout: function () {
+                TwoFactorX.util.getUserSettings();
             }
         }
     });

@@ -81,7 +81,7 @@ class TwoFactorXEmailSecretProcessor extends Processor
             }
             return $this->modx->error->success($this->modx->lexicon('twofactorx.email_success'));
         } else {
-            return $this->modx->error->failure($this->modx->lexicon('twofactorx.invaliddata'));
+            return $this->modx->error->failure($this->modx->lexicon('twofactorx.error_invalid_data'));
         }
     }
 

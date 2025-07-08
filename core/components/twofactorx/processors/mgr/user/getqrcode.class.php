@@ -19,7 +19,7 @@ class TwoFactorXUserGetQRCodeProcessor extends Processor
         $this->twofactorx->loadUserByID($userid);
         $settings = $this->twofactorx->getDecryptedSettings();
         if ($settings) {
-            if ($this->twofactorx->getOption('show_in_profile') || $settings['inonetime'] == 'yes') {
+            if ($this->twofactorx->getOption('show_in_profile') || $settings['verifytotp'] == 'yes') {
                 return $this->success('', [
                     'accountname' => $this->twofactorx->userName,
                     'secret' => $settings['secret'],

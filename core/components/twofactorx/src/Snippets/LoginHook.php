@@ -21,7 +21,7 @@ class LoginHook extends Hook
     public function getDefaultProperties()
     {
         return [
-            'errorMsg' => $this->modx->lexicon('twofactorx.invalidcode'),
+            'errorMsg' => $this->modx->lexicon('twofactorx.error_invalid_key'),
         ];
     }
 
@@ -47,7 +47,7 @@ class LoginHook extends Hook
         $this->twofactorx->loadUserByName($username);
 
         $settings = $this->twofactorx->getDecryptedSettings();
-        if (!$settings['totp_disabled'] && $settings['inonetime'] == 'yes') {
+        if (!$settings['totp_disabled'] && $settings['verifytotp'] == 'yes') {
             if (empty($code)) {
                 $errorMsg = $this->modx->lexicon('twofactorx.enterkey');
                 $this->hook->addError('code', $errorMsg);

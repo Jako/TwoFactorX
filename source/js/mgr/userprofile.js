@@ -1,30 +1,28 @@
 Ext.onReady(function () {
     var profilePanel = Ext.getCmp('modx-panel-profile-update');
     profilePanel.add({
-        columnWidth: 1,
-        xtype: 'panel',
-        layout: 'form',
         anchor: '100%',
-        id: 'twofactorx-qrcode',
         cls: 'x-form-item',
-        style: 'margin-left: 0',
+        columnWidth: 1,
         items: [{
-            html: '<div id="qrcode"><img id="qrimg" src="" alt="' + _('twofactorx.lbl_qrcode') + '"/></div>',
-            fieldLabel: _('twofactorx.lbl_qrcode'),
+            html: '<div><img id="twofactorx-qrcode" class="twofactorx-loading" src="" alt="' + _('twofactorx.qrcode') + '"/></div>',
+            fieldLabel: _('twofactorx.qrcode'),
             anchor: '50%'
         }, {
             xtype: 'field',
-            fieldLabel: _('twofactorx.lbl_secret'),
+            fieldLabel: _('twofactorx.secret'),
             id: 'twofactorx-secret',
             submitValue: false,
             readOnly: true,
             anchor: '50%'
         }],
+        layout: 'form',
         listeners: {
-            afterlayout: {
-                fn: TwoFactorX.util.getUserQRCode,
-                scope: this
+            afterlayout: function () {
+                TwoFactorX.util.getUserQRCode('twofactorx-secret', 'twofactorx-qrcode');
             }
-        }
+        },
+        style: 'margin-left: 0',
+        xtype: 'panel'
     });
 });

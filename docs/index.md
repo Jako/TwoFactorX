@@ -12,7 +12,7 @@ Add a two-factor authentication to MODX.
 * Add a two-factor authentication to the MODX manager.
 * Secure the front end login with a pre-hook for the "Login" extra.
 * Generate a QR Code for saving the authenticator secret with a snippet.
-* Login once in the manager without two-factor authentication.
+* Login into the manager without two-factor authentication until the authenticator secret is verified.
 
 ### License
 

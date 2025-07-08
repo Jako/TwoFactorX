@@ -37,14 +37,13 @@ The following additional placeholders are set by the snippet:
 
 TwoFactorX uses the following system settings in the namespace `twofactorx`.
 
-| Key                        | Name                             | Description                                                                                                            | Default |
-|----------------------------|----------------------------------|------------------------------------------------------------------------------------------------------------------------|---------|
-| twofactorx.debug           | Debug                            | Log debug information in the MODX error log.                                                                           | No      |
-| twofactorx.enable_2fa      | Enable Two-Factor Authentication | If you enable the two-factor authentication, the manager login is secured with an additional TOTP authentication code. | No      |
-| twofactorx.enable_onetime  | Enable One-Time Login            | If you enable one-time login, users are allowed to log in once to retrieve their secret.                               | Yes     |
-| twofactorx.encryption_key  | Encryption Key                   | Encryption key that is used for the encryption of the 2FA data. Do not change.                                         | -       |
-| twofactorx.issuer          | QR Code Issuer                   | Specify the value of the issuer in the QR code. The default value is the system setting site_name.                     | -       |
-| twofactorx.show_in_profile | Show Secret In User Profile      | Allow manager users to see the QR code and the secret for two-factor authentication in their user profile.             | No      |
+| Key                        | Name                             | Description                                                                                                            | Default     |
+|----------------------------|----------------------------------|------------------------------------------------------------------------------------------------------------------------|-------------|
+| twofactorx.debug           | Debug                            | Log debug information in the MODX error log.                                                                           | No          |
+| twofactorx.enable_2fa      | Enable Two-Factor Authentication | If you enable the two-factor authentication, the manager login is secured with an additional TOTP authentication code. | No          |
+| twofactorx.encryption_key  | Encryption Key                   | Encryption key that is used for the encryption of the 2FA data. Do not change.                                         | -           |
+| twofactorx.issuer          | QR Code Issuer                   | Specify the value of the issuer in the QR code.                                                                        | `site_name` |
+| twofactorx.show_in_profile | Show Secret In User Profile      | Allow manager users to see the QR code and the secret for two-factor authentication in their user profile.             | No          |
 
 ## Permissions
 

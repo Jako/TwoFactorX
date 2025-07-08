@@ -10,7 +10,7 @@ use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelMedium;
 use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeNone;
-use Endroid\QrCode\Writer\SvgWriter;
+use Endroid\QrCode\Writer\PngWriter;
 use TreehillStudio\TwoFactorX\Processors\Processor;
 
 /**
@@ -30,12 +30,12 @@ class TwoFactorXQRCodeGetProcessor extends Processor
         $issuer = $this->getProperty('issuer');
 
         $result = Builder::create()
-            ->writer(new SvgWriter())
+            ->writer(new PngWriter())
             ->writerOptions([])
             ->data($this->twofactorx->getUri($accountname, $secret, $issuer))
             ->encoding(new Encoding('UTF-8'))
             ->errorCorrectionLevel(new ErrorCorrectionLevelMedium())
-            ->size(200)
+            ->size(400)
             ->margin(0)
             ->roundBlockSizeMode(new RoundBlockSizeModeNone())
             ->build();

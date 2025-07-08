@@ -40,7 +40,7 @@ class TwoFactorX
      * The version
      * @var string $version
      */
-    public string $version = '1.0.8';
+    public string $version = '1.1.0';
 
     /**
      * The class options
@@ -48,9 +48,6 @@ class TwoFactorX
      */
     public $options = [];
 
-    public bool $userStatus = false;
-    public bool $userExist = false;
-    public bool $userOnetimeStatus = false;
     public string $userName;
     public int $userId;
 
@@ -81,7 +78,6 @@ class TwoFactorX
     public function __construct(modX &$modx, array $options = [])
     {
         $this->modx =& $modx;
-        $this->namespace = $this->getOption('namespace', $options, $this->namespace);
 
         $corePath = $this->getOption('core_path', $options, $this->modx->getOption('core_path', null, MODX_CORE_PATH) . 'components/' . $this->namespace . '/');
         $assetsPath = $this->getOption('assets_path', $options, $this->modx->getOption('assets_path', null, MODX_ASSETS_PATH) . 'components/' . $this->namespace . '/');
@@ -180,9 +176,9 @@ class TwoFactorX
     /**
      * @return bool
      */
-    public function isUserDisabled(): bool
+    public function isUserTotpDisabled(): bool
     {
-        return (bool)$this->userSettings['totp_disabled'];
+        return isset($this->userSettings['totp_disabled']) && $this->userSettings['totp_disabled'];
     }
 
     /**
@@ -249,7 +245,6 @@ class TwoFactorX
                 $this->modx->log(xPDO::LOG_LEVEL_ERROR, "Loading user by ID: $userid", '', 'TwoFactorX');
             }
             $this->user = $user;
-            $this->userExist = true;
             $this->userName = $this->user->get('username');
             $this->userId = $userid;
             $this->getUserSettings();
@@ -258,9 +253,9 @@ class TwoFactorX
             if ($this->getOption('debug')) {
                 $this->modx->log(xPDO::LOG_LEVEL_ERROR, "No user was found with ID: $userid", '', 'TwoFactorX');
             }
+            $this->user = null;
             $this->userName = '';
             $this->userId = 0;
-            $this->user = null;
             return false;
         }
     }
@@ -278,7 +273,6 @@ class TwoFactorX
                 $this->modx->log(xPDO::LOG_LEVEL_ERROR, "Loading user by name: $username", '', 'TwoFactorX');
             }
             $this->user = $user;
-            $this->userExist = true;
             $this->userId = $this->user->get('id');
             $this->userName = $username;
             $this->getUserSettings();
@@ -287,6 +281,9 @@ class TwoFactorX
             if ($this->getOption('debug')) {
                 $this->modx->log(xPDO::LOG_LEVEL_ERROR, "No user was found with name: $username", '', 'TwoFactorX');
             }
+            $this->user = null;
+            $this->userName = '';
+            $this->userId = 0;
             return false;
         }
     }
@@ -297,7 +294,7 @@ class TwoFactorX
     public function getDecryptedSettings(): array
     {
         $settings = $this->userSettings;
-        $settings['totp_disabled'] = $this->userStatus;
+        $settings['totp_disabled'] = $this->getUserTotpDisabled();
         return $settings;
     }
 
@@ -322,15 +319,19 @@ class TwoFactorX
                 }
             }
             $this->userSettings = $this->getDecryptedArray($userSettings);
-            $this->userSettings['inonetime'] = preg_replace('/[^[:print:]]/', '', $this->userSettings['inonetime']); // Fix issue with decrypted string
+            if (isset($this->userSettings['inonetime'])) {
+                $this->userSettings['verifytotp'] = preg_replace('/[^[:print:]]/', '', $this->userSettings['inonetime']); // Fix issue with decrypted string
+                $this->saveUserSettings();
+            } else {
+                $this->userSettings['verifytotp'] = preg_replace('/[^[:print:]]/', '', $this->userSettings['verifytotp']); // Fix issue with decrypted string
+            }
             if (!$this->isSecretValid($this->userSettings['secret'])) {
                 $this->resetSecret();
                 if ($this->getOption('debug')) {
                     $this->modx->log(xPDO::LOG_LEVEL_ERROR, "Invalid secret for user: $this->userName ($this->userId)", '', 'TwoFactorX');
                 }
             }
-            $this->userStatus = $this->getUserStatus();
-            $this->userOnetimeStatus = $this->getUserOnetimeStatus();
+            $this->userSettings['totp_disabled'] = $this->getUserTotpDisabled();
             $this->userSettings['uri'] = $this->getUri($this->userName, $this->userSettings['secret'], $this->getOption('issuer'));
             if ($this->getOption('debug')) {
                 $this->modx->log(xPDO::LOG_LEVEL_ERROR, "Data loaded for user: $this->userName ($this->userId)", '', 'TwoFactorX');
@@ -399,60 +400,47 @@ class TwoFactorX
             $uri = $this->getUri($username, $secret, $this->getOption('issuer'));
             $this->userIV = $this->generateIV();
             $this->userSettings = [
-                'inonetime' => $this->isOnetimeEnabled() ? 'yes' : 'no',
+                'verifytotp' => 'yes',
                 'secret' => $secret,
                 'uri' => $uri,
                 'iv' => base64_encode($this->userIV),
             ];
-            $this->userStatus = $this->getUserStatus();
-            $this->userOnetimeStatus = $this->getUserOnetimeStatus();
-        }
-    }
-
-    /**
-     * @return false|mixed
-     */
-    private function getUserStatus()
-    {
-        $usersettings = $this->user->getSettings();
-        if (isset($usersettings['totp_disabled'])) {
-            if ($this->getOption('debug')) {
-                $this->modx->log(xPDO::LOG_LEVEL_ERROR, "User setting totp_disabled loaded for user: $this->userName ($this->userId)", '', 'TwoFactorX');
-            }
-            return $usersettings['totp_disabled'];
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * @return mixed
-     */
-    private function isOnetimeEnabled()
-    {
-        $enabled = $this->getOption('enable_onetime');
-        $usersettings = $this->user->getSettings();
-        if (isset($usersettings['enable_onetime'])) {
-            if ($this->getOption('debug')) {
-                $this->modx->log(xPDO::LOG_LEVEL_ERROR, "User setting enable_onetime loaded with value {$usersettings['enable_onetime']} for user: $this->userName ($this->userId)", '', 'TwoFactorX');
-            }
-            return $usersettings['enable_onetime'];
-        } else {
-            if ($this->getOption('debug')) {
-                $this->modx->log(xPDO::LOG_LEVEL_ERROR, "Applying global onetime log in value: $enabled", '', 'TwoFactorX');
-            }
-            return $enabled;
+            $this->userSettings['totp_disabled'] = $this->getUserTotpDisabled();
         }
     }
 
     /**
      * @return bool
      */
-    private function getUserOnetimeStatus(): bool
+    public function getUserExist()
     {
-        if ($this->isOnetimeEnabled() && $this->userSettings['inonetime'] == 'yes') {
+        return !empty($this->userId);
+    }
+
+    /**
+     * @return false|mixed
+     */
+    public function getUserTotpDisabled()
+    {
+        $userSettings = $this->user->getSettings();
+        if ($this->isUserTotpDisabled()) {
             if ($this->getOption('debug')) {
-                $this->modx->log(xPDO::LOG_LEVEL_ERROR, "User is in onetime mode - user: $this->userName ($this->userId)", '', 'TwoFactorX');
+                $this->modx->log(xPDO::LOG_LEVEL_ERROR, "User setting totp_disabled loaded for user: $this->userName ($this->userId)", '', 'TwoFactorX');
+            }
+            return $userSettings['totp_disabled'];
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function getUserVerifyTotpStatus(): bool
+    {
+        if ($this->userSettings['verifytotp'] === 'yes') {
+            if ($this->getOption('debug')) {
+                $this->modx->log(xPDO::LOG_LEVEL_ERROR, "User is in verify TOTP mode - user: $this->userName ($this->userId)", '', 'TwoFactorX');
             }
             return true;
         } else {
@@ -463,13 +451,12 @@ class TwoFactorX
     /**
      * @return void
      */
-    public function resetUserOnetime()
+    public function setVerfyTotpStatus($status)
     {
         if ($this->getOption('debug')) {
-            $this->modx->log(xPDO::LOG_LEVEL_ERROR, "Resetting user onetime status for user: $this->userName ($this->userId)", '', 'TwoFactorX');
+            $this->modx->log(xPDO::LOG_LEVEL_ERROR, "Set user verify TOTP status for user: $this->userName ($this->userId) to $status", '', 'TwoFactorX');
         }
-        $this->userSettings['inonetime'] = 'no';
-        $this->userOnetimeStatus = false;
+        $this->userSettings['verifytotp'] = $status;
         $this->saveUserSettings();
     }
 
@@ -503,7 +490,6 @@ class TwoFactorX
             $setting->set('value', $status);
             $setting->save();
         }
-        $this->userStatus = $status;
     }
 
     /**
@@ -512,7 +498,7 @@ class TwoFactorX
     private function getEncryptedArray(): array
     {
         return [
-            'inonetime' => $this->encrypt($this->userSettings['inonetime']),
+            'verifytotp' => $this->encrypt($this->userSettings['verifytotp']),
             'secret' => $this->encrypt($this->userSettings['secret']),
             'uri' => $this->encrypt($this->userSettings['uri']),
             'iv' => base64_encode($this->userIV),
@@ -525,12 +511,16 @@ class TwoFactorX
      */
     private function getDecryptedArray($array): array
     {
-        return [
-            'inonetime' => $this->decrypt($this->getOption('inonetime', $array, '')),
+        $result = [
+            'verifytotp' => $this->decrypt($this->getOption('verifytotp', $array, '')) === 'no' ? 'no' : 'yes',
             'secret' => $this->decrypt($this->getOption('secret', $array, '')),
             'uri' => $this->decrypt($this->getOption('uri', $array, '')),
             'iv' => $this->getOption('iv', $array, ''),
         ];
+        if ($this->getOption('inonetime', $array, '')) {
+            $result['inonetime'] = $this->decrypt($this->getOption('inonetime', $array, ''));
+        }
+        return $result;
     }
 
     /**

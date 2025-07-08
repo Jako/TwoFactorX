@@ -52,16 +52,16 @@ const scriptsUserProfile = function () {
         .pipe(header(banner + '\n', {pkg: pkg}))
         .pipe(gulp.dest('assets/components/twofactorx/js/mgr/'))
 };
-const scriptsUserOnetime = function () {
+const scriptsUserVerifyTotp = function () {
     return gulp.src([
-        'source/js/mgr/useronetime.js',
+        'source/js/mgr/userverifytotp.js',
     ])
-        .pipe(concat('useronetime.min.js'))
+        .pipe(concat('userverifytotp.min.js'))
         .pipe(uglify())
         .pipe(header(banner + '\n', {pkg: pkg}))
         .pipe(gulp.dest('assets/components/twofactorx/js/mgr/'))
 };
-gulp.task('scripts', gulp.series(scriptsMgr, scriptsUserTab, scriptsUserProfile, scriptsUserOnetime));
+gulp.task('scripts', gulp.series(scriptsMgr, scriptsUserTab, scriptsUserProfile, scriptsUserVerifyTotp));
 
 const sassMgr = function () {
     return gulp.src([

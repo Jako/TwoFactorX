@@ -35,9 +35,10 @@ TwoFactorX.util = {
                         var status = Ext.getCmp('twofactorx-status');
                         var secret = Ext.getCmp('twofactorx-secret');
                         var uri = Ext.getCmp('twofactorx-uri');
+                        var qrcode = document.getElementById('twofactorx-qrcode');
                         secret.setValue(r.object.secret);
                         uri.setValue(decodeURIComponent(r.object.uri));
-                        document.getElementById('qrimg').src = TwoFactorX.util.urlTpl.apply({
+                        document.getElementById('twofactorx-qrcode').src = TwoFactorX.util.urlTpl.apply({
                             connector_url: TwoFactorX.config.connectorUrl,
                             action: 'mgr/qrcode/get',
                             accountname: r.object.accountname,
@@ -46,12 +47,12 @@ TwoFactorX.util = {
                             site_id: MODx.siteId
                         });
                         if (r.object.totp_disabled === true) {
-                            changestatus.setText(_('twofactorx.btn_enable'));
+                            changestatus.setText(_('twofactorx.enable'));
                             status.setValue(_('twofactorx.disabled'));
                             status.addClass('red');
                         }
                         if (r.object.totp_disabled === false) {
-                            changestatus.setText(_('twofactorx.btn_disable'));
+                            changestatus.setText(_('twofactorx.disable'));
                             status.setValue(_('twofactorx.enabled'));
                             status.removeClass('red');
                         }
@@ -61,7 +62,7 @@ TwoFactorX.util = {
             }
         });
     },
-    getUserQRCode: function () {
+    getUserQRCode: function (field = 'twofactorx-secret', image = 'twofactorx-qrcode') {
         MODx.Ajax.request({
             url: TwoFactorX.config.connectorUrl,
             params: {
@@ -70,11 +71,11 @@ TwoFactorX.util = {
             listeners: {
                 success: {
                     fn: function (r) {
-                        var secret = Ext.getCmp('twofactorx-secret');
+                        var secret = Ext.getCmp(field);
                         if (secret) {
                             secret.setValue(r.object.secret);
                         }
-                        document.getElementById('qrimg').src = TwoFactorX.util.urlTpl.apply({
+                        document.getElementById(image).src = TwoFactorX.util.urlTpl.apply({
                             connector_url: TwoFactorX.config.connectorUrl,
                             action: 'mgr/qrcode/get',
                             accountname: r.object.accountname,
@@ -112,7 +113,7 @@ TwoFactorX.util = {
                 }
             });
         } else if (btn !== 'no') {
-            TwoFactorX.util.confirm(_('twofactorx.btn_changestatus_confirm'), TwoFactorX.util.changeStatus);
+            TwoFactorX.util.confirm(_('twofactorx.changestatus_confirm'), TwoFactorX.util.changeStatus);
         }
     },
     resetSecret: function (btn) {
@@ -131,7 +132,7 @@ TwoFactorX.util = {
                 }
             });
         } else if (btn !== 'no') {
-            TwoFactorX.util.confirm(_('twofactorx.btn_resetsecret_confirm'), TwoFactorX.util.resetSecret);
+            TwoFactorX.util.confirm(_('twofactorx.resetsecret_confirm'), TwoFactorX.util.resetSecret);
         }
     },
     emailInstructions: function (btn) {
@@ -152,7 +153,7 @@ TwoFactorX.util = {
                 }
             });
         } else if (btn !== 'no') {
-            TwoFactorX.util.confirm(_('twofactorx.btn_emailinstructions_confirm'), TwoFactorX.util.emailInstructions);
+            TwoFactorX.util.confirm(_('twofactorx.emailinstructions_confirm'), TwoFactorX.util.emailInstructions);
         }
     },
     emailQR: function (btn) {
@@ -173,7 +174,7 @@ TwoFactorX.util = {
                 }
             });
         } else if (btn !== 'no') {
-            TwoFactorX.util.confirm(_('twofactorx.btn_emailqr_confirm'), TwoFactorX.util.emailQR);
+            TwoFactorX.util.confirm(_('twofactorx.emailqr_confirm'), TwoFactorX.util.emailQR);
         }
     },
     confirm: function (msg, f) {

@@ -37,13 +37,13 @@ class OnManagerPageBeforeRender extends Plugin
 
         $userid = $this->modx->user->get('id');
         $this->twofactorx->loadUserByID($userid);
-        if ($this->twofactorx->userOnetimeStatus && $this->twofactorx->getOption('enable_2fa') && !$this->twofactorx->userStatus) {
+        if ($this->twofactorx->getUserVerifyTotpStatus() && $this->twofactorx->getOption('enable_2fa') && !$this->twofactorx->getUserTotpDisabled()) {
             if ($this->twofactorx->getOption('debug') && ($this->twofactorx->getOption('assetsUrl') != MODX_ASSETS_URL . 'components/twofactorx/')) {
-                $this->modx->controller->addLastJavascript($jsSourceUrl . 'useronetime.js?v=v' . $this->twofactorx->version);
+                $this->modx->controller->addLastJavascript($jsSourceUrl . 'userverifytotp.js?v=v' . $this->twofactorx->version);
             } else {
-                $this->modx->controller->addLastJavascript($jsUrl . 'useronetime.min.js?v=v' . $this->twofactorx->version);
+                $this->modx->controller->addLastJavascript($jsUrl . 'userverifytotp.min.js?v=v' . $this->twofactorx->version);
             }
-            $this->twofactorx->resetUserOnetime();
+            $this->twofactorx->setVerfyTotpStatus('yes');
         }
 
         if ($this->modx->request->action == 'security/profile' && $this->twofactorx->getOption('show_in_profile')) {

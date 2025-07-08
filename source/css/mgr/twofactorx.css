@@ -9,3 +9,29 @@
   padding-left: 5px !important;
   display: inline-block;
 }
+
+.twofactorx-loading {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  display: block;
+}
+.twofactorx-loading:after {
+  position: absolute;
+  top: calc(50% - 10px);
+  left: calc(50% - 10px);
+  display: block;
+  content: "";
+  width: 20px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(farthest-side, #1a7fb8 95%, rgba(0, 0, 0, 0)) top/3px 3px no-repeat, conic-gradient(rgba(0, 0, 0, 0) 30%, #1a7fb8);
+  -webkit-mask: radial-gradient(farthest-side, rgba(0, 0, 0, 0) calc(100% - 3px), #000 0);
+          mask: radial-gradient(farthest-side, rgba(0, 0, 0, 0) calc(100% - 3px), #000 0);
+  animation: rotate-loading 1s infinite linear;
+}
+@keyframes rotate-loading {
+  100% {
+    transform: rotate(1turn);
+  }
+}

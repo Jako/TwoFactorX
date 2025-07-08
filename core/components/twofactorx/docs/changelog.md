@@ -5,12 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.9] - TBA
+## [1.1.0] - 2025-07-08
+
+### Changed
+
+- Remove the `twofactorx.enable_onetime` system setting and allow the user to reload the manager showing a verify window with each load.
+- Verify the secret in the authenticator app with the generated authentication key to enable the two-factor authentication in the manager login.
+- Migrate the `inonetime` user setting to the `verifytotp` user setting
 
 ### Fixed
 
 - Get the right email language in MODX 3
-- Fix some small issues
 
 ## [1.0.8] - 2025-03-02
 

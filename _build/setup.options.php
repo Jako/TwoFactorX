@@ -48,7 +48,7 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
                         <input type="hidden" name="enable_2fa" value="0">
                         <input type="checkbox" name="enable_2fa" id="enable_2fa" ' . (($defaults['enable_2fa']) ? 'checked' : '') . ' value="1"> 
                         <label for="enable_2fa" style="display: inline;">Enable two-factor authentication</label>
-                        <p class="red">If you enable two-factor authentication, be ready with your mobile device for setting up the TOTP secret for this manager login, otherwise you will lose your login session.</p>
+                        <p class="red">If you enable two-factor authentication, you have to verify the TOTP secret for the manager users. When it is verified, the manager user has to use the TOTP key to login into the manager.</p>
                     </div>';
         break;
     case xPDOTransport::ACTION_UPGRADE:

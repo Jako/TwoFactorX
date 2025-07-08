@@ -12,7 +12,6 @@
 $success = false;
 $migrateSettings = [
     'gax_disabled::invert' => 'twofactorx.enable_2fa',
-    'gax_courtesy_enabled' => 'twofactorx.enable_onetime',
     'gax_profile_enabled' => 'twofactorx.show_in_profile',
     'gax_issuer' => 'twofactorx.issuer',
     'gax_encrypt_key' => 'twofactorx.encryption_key',

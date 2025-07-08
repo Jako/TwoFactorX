@@ -1,6 +1,6 @@
 # TwoFactorX
 
-Add two-factor authentication to the MODX manager.
+Add a two-factor TOTP authentication to the MODX manager.
 
 - Author: Thomas Jakobi <office@treehillstudio.com>
 - License: GNU GPLv2
@@ -24,10 +24,9 @@ MODX Package Management
 
 ## Usage
 
-Install via package manager. After you have saved the two-factor secret shown in
-the TwoFactorX tab when you edit your manager user, you can enable the system
-setting twofactorx.enable_2fa. When the system setting enable_onetime is
-enabled, a manager user can log in once without two-factor authentication.
+Install via package manager and enable the system setting twofactorx.enable_2fa.
+After that, you have to verify the TOTP secret for the manager user. When it is
+verified, the manager user has to use the TOTP key to login into the manager.
 
 ## Documentation
 
