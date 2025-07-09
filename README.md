@@ -12,9 +12,7 @@ MODX Package Management
 
 ## Usage
 
-Install via package manager. After you have saved the two-factor secret shown in
-the TwoFactorX tab when you edit your manager user, you can enable the system
-setting twofactorx.enable_2fa. When the system setting enable_2fa is enabled, a
+Install via package manager. When the system setting enable_2fa is enabled, a
 manager user has to verify the TOTP secret. Otherwise, the authenticator secret
 verify window is displayed with each manager load. When it is verified, the
 manager user has to use the TOTP key to login into the manager. The TOTP

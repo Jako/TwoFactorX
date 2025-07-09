@@ -21,7 +21,7 @@ class TwoFactorXUserGetQRCodeProcessor extends Processor
         } else {
             if (!$this->twofactorx->getUserExist()) {
                 return $this->modx->error->failure($this->modx->lexicon('twofactorx.error_user_not_found'));
-            } else if ($this->twofactorx->getUserTotpDisabled()) {
+            } else if ($this->twofactorx->getUserTotpStatus()) {
                 return $this->modx->error->failure($this->modx->lexicon('twofactorx.error_user_totp_disabled'));
             } else if (empty($key)) {
                 return $this->modx->error->failure($this->modx->lexicon('twofactorx.error_empty_key'));

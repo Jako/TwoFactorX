@@ -37,7 +37,7 @@ class OnManagerPageBeforeRender extends Plugin
 
         $userid = $this->modx->user->get('id');
         $this->twofactorx->loadUserByID($userid);
-        if ($this->twofactorx->getUserVerifyTotpStatus() && $this->twofactorx->getOption('enable_2fa') && !$this->twofactorx->getUserTotpDisabled()) {
+        if ($this->twofactorx->getUserVerifyTotpStatus() && $this->twofactorx->getOption('enable_2fa') && !$this->twofactorx->getUserTotpStatus()) {
             if ($this->twofactorx->getOption('debug') && ($this->twofactorx->getOption('assetsUrl') != MODX_ASSETS_URL . 'components/twofactorx/')) {
                 $this->modx->controller->addLastJavascript($jsSourceUrl . 'userverifytotp.js?v=v' . $this->twofactorx->version);
             } else {

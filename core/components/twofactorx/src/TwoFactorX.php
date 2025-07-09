@@ -40,7 +40,7 @@ class TwoFactorX
      * The version
      * @var string $version
      */
-    public string $version = '1.1.0';
+    public string $version = '1.1.1';
 
     /**
      * The class options
@@ -293,9 +293,8 @@ class TwoFactorX
      */
     public function getDecryptedSettings(): array
     {
-        $settings = $this->userSettings;
-        $settings['totp_disabled'] = $this->getUserTotpDisabled();
-        return $settings;
+        $this->userSettings['totp_disabled'] = $this->getUserTotpStatus();
+        return $this->userSettings;
     }
 
     /**
@@ -309,7 +308,7 @@ class TwoFactorX
         if (is_array($extended) && isset($extended['twofactorx']) && is_array($extended['twofactorx'])) {
             $userSettings = $extended['twofactorx'];
         }
-        if (is_array($userSettings)) { // extended field container in place, we load settings.
+        if (is_array($userSettings)) { // Extended field container in place, we load settings.
             $this->userIV = base64_decode($userSettings['iv']);
             // Validate IV to avoid php warning
             if (strlen(bin2hex($this->userIV)) / 2 != 16) {
@@ -331,7 +330,7 @@ class TwoFactorX
                     $this->modx->log(xPDO::LOG_LEVEL_ERROR, "Invalid secret for user: $this->userName ($this->userId)", '', 'TwoFactorX');
                 }
             }
-            $this->userSettings['totp_disabled'] = $this->getUserTotpDisabled();
+            $this->userSettings['totp_disabled'] = $this->getUserTotpStatus();
             $this->userSettings['uri'] = $this->getUri($this->userName, $this->userSettings['secret'], $this->getOption('issuer'));
             if ($this->getOption('debug')) {
                 $this->modx->log(xPDO::LOG_LEVEL_ERROR, "Data loaded for user: $this->userName ($this->userId)", '', 'TwoFactorX');
@@ -405,7 +404,7 @@ class TwoFactorX
                 'uri' => $uri,
                 'iv' => base64_encode($this->userIV),
             ];
-            $this->userSettings['totp_disabled'] = $this->getUserTotpDisabled();
+            $this->userSettings['totp_disabled'] = $this->getUserTotpStatus();
         }
     }
 
@@ -420,14 +419,15 @@ class TwoFactorX
     /**
      * @return false|mixed
      */
-    public function getUserTotpDisabled()
+    public function getUserTotpStatus()
     {
         $userSettings = $this->user->getSettings();
+        $this->userSettings['totp_disabled'] = $userSettings['totp_disabled'] === '1';
         if ($this->isUserTotpDisabled()) {
             if ($this->getOption('debug')) {
                 $this->modx->log(xPDO::LOG_LEVEL_ERROR, "User setting totp_disabled loaded for user: $this->userName ($this->userId)", '', 'TwoFactorX');
             }
-            return $userSettings['totp_disabled'];
+            return $this->userSettings['totp_disabled'];
         } else {
             return false;
         }
@@ -464,14 +464,14 @@ class TwoFactorX
      * @param bool $status
      * @return void
      */
-    public function SetUserDisabledStatus(bool $status = false)
+    public function setUserTotpStatus(bool $status = false)
     {
         $userid = $this->user->get('id');
         $setting = $this->modx->getObject('modUserSetting', [
             'user' => $userid,
             'key' => 'totp_disabled'
         ]);
-        if ($setting === null && $status) { //no user setting but status is true(GA disabled) then we create
+        if ($setting === null && $status) { // No user setting exist but the TOTP is disabled then create the setting
             if ($this->getOption('debug')) {
                 $this->modx->log(xPDO::LOG_LEVEL_ERROR, "Creating totp_disabled userSetting - user: $this->userName ($this->userId)", '', 'TwoFactorX');
             }
@@ -483,7 +483,7 @@ class TwoFactorX
             $setting->set('namespace', 'twofactorx');
             $setting->set('area', 'system');
             $setting->save();
-        } else if ($setting !== null && $setting->get('value') != $status) { //user setting exists but status changing we just change it
+        } else if ($setting !== null && $setting->get('value') != $status) { // User setting exists and the status has changed
             if ($this->getOption('debug')) {
                 $this->modx->log(xPDO::LOG_LEVEL_ERROR, "Changing totp_disabled userSetting to $status - user: $this->userName ($this->userId)", '', 'TwoFactorX');
             }

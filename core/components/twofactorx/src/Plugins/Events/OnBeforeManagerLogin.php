@@ -26,7 +26,7 @@ class OnBeforeManagerLogin extends Plugin
             $this->modx->controller->addLexiconTopic('twofactorx:default');
             if (!$this->twofactorx->getUserExist()) {
                 $output = true;
-            } else if ($this->twofactorx->getUserTotpDisabled()) {
+            } else if ($this->twofactorx->getUserTotpStatus()) {
                 $output = true;
                 if ($this->twofactorx->getOption('debug')) {
                     $this->modx->log(xPDO::LOG_LEVEL_ERROR, "Two Factor Authentication for user $username is disabled.");

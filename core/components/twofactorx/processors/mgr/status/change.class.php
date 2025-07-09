@@ -22,7 +22,7 @@ class TwoFactorXStatusChangeProcessor extends Processor
             $current = false;
         }
         $this->twofactorx->loadUserByID($userid);
-        $this->twofactorx->SetUserDisabledStatus($current);
+        $this->twofactorx->setUserTotpStatus($current);
         return $this->modx->error->success($this->modx->lexicon('twofactorx.status_changed'));
     }
 }
