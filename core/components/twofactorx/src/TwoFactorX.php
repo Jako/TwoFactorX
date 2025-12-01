@@ -438,7 +438,7 @@ class TwoFactorX
      */
     public function getUserVerifyTotpStatus(): bool
     {
-        if ($this->userSettings['verifytotp'] === 'yes') {
+        if ($this->modx->getOption('verifytotp', $this->userSettings) === 'yes') {
             if ($this->getOption('debug')) {
                 $this->modx->log(xPDO::LOG_LEVEL_ERROR, "User is in verify TOTP mode - user: $this->userName ($this->userId)", '', 'TwoFactorX');
             }
