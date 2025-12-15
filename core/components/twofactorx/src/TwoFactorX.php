@@ -40,7 +40,7 @@ class TwoFactorX
      * The version
      * @var string $version
      */
-    public string $version = '1.1.1';
+    public string $version = '1.1.2';
 
     /**
      * The class options

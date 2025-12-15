@@ -1,6 +1,6 @@
 #twofactorx-user-tab .x-panel-btns{margin-left:-7px;padding:0 0 7px}#twofactorx-user-tab .x-panel-btns .x-btn{margin-bottom:7px}#twofactorx-user-tab .x-form-label-left .x-form-element{display:inline-block;padding-left:5px!important}.twofactorx-loading{display:block;height:200px;position:relative;width:200px}.twofactorx-loading:after{animation:rotate-loading 1s linear infinite;aspect-ratio:1;background:radial-gradient(farthest-side,#1a7fb8 95%,transparent) top/3px 3px no-repeat,conic-gradient(transparent 30%,#1a7fb8);border-radius:50%;content:"";display:block;left:calc(50% - 10px);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 0);mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 0);position:absolute;top:calc(50% - 10px);width:20px}@keyframes rotate-loading{to{transform:rotate(1turn)}}
 /*!
  * TwoFactorX - Two-factor authentication for MODX
- * Version: 1.1.1
- * Build date: 2025-07-09
+ * Version: 1.1.2
+ * Build date: 2025-12-15
  */
