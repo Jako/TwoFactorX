@@ -1,13 +1,3 @@
-_build/build.config.php
-config.core.php
+The provided file change list only shows a directory being added ('2Auntification/') without any specific file extensions or build artifacts that would typically warrant adding to .gitignore. Since there are no compiled files, dependency directories, editor files, or other common ignore patterns present in the changes, no modifications to .gitignore are necessary.
 
-_build/site
-
-icon/*.svg
-
-_packages/*.*
-!_packages/.gitignore
-!_packages/*.zip
-
-node_modules/
-core/components/*/vendor/
+(empty)
