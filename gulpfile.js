@@ -17,7 +17,7 @@ const gulp = require('gulp'),
 const banner = '/*!\n' +
     ' * <%= pkg.name %> - <%= pkg.description %>\n' +
     ' * Version: <%= pkg.version %>\n' +
-    ' * Build date: ' + format("yyyy-MM-dd", new Date()) + '\n' +
+    ' * Build date: ' + format('yyyy-MM-dd', new Date()) + '\n' +
     ' */';
 const year = new Date().getFullYear();
 
@@ -31,8 +31,8 @@ const scriptsMgr = function () {
     ])
         .pipe(concat('twofactorx.min.js'))
         .pipe(uglify())
-        .pipe(header(banner + '\n', {pkg: pkg}))
-        .pipe(gulp.dest('assets/components/twofactorx/js/mgr/'))
+        .pipe(header(banner + '\n', { pkg: pkg }))
+        .pipe(gulp.dest('assets/components/twofactorx/js/mgr/'));
 };
 const scriptsUserTab = function () {
     return gulp.src([
@@ -40,8 +40,8 @@ const scriptsUserTab = function () {
     ])
         .pipe(concat('usertab.min.js'))
         .pipe(uglify())
-        .pipe(header(banner + '\n', {pkg: pkg}))
-        .pipe(gulp.dest('assets/components/twofactorx/js/mgr/'))
+        .pipe(header(banner + '\n', { pkg: pkg }))
+        .pipe(gulp.dest('assets/components/twofactorx/js/mgr/'));
 };
 const scriptsUserProfile = function () {
     return gulp.src([
@@ -49,8 +49,8 @@ const scriptsUserProfile = function () {
     ])
         .pipe(concat('userprofile.min.js'))
         .pipe(uglify())
-        .pipe(header(banner + '\n', {pkg: pkg}))
-        .pipe(gulp.dest('assets/components/twofactorx/js/mgr/'))
+        .pipe(header(banner + '\n', { pkg: pkg }))
+        .pipe(gulp.dest('assets/components/twofactorx/js/mgr/'));
 };
 const scriptsUserVerifyTotp = function () {
     return gulp.src([
@@ -58,8 +58,8 @@ const scriptsUserVerifyTotp = function () {
     ])
         .pipe(concat('userverifytotp.min.js'))
         .pipe(uglify())
-        .pipe(header(banner + '\n', {pkg: pkg}))
-        .pipe(gulp.dest('assets/components/twofactorx/js/mgr/'))
+        .pipe(header(banner + '\n', { pkg: pkg }))
+        .pipe(gulp.dest('assets/components/twofactorx/js/mgr/'));
 };
 gulp.task('scripts', gulp.series(scriptsMgr, scriptsUserTab, scriptsUserProfile, scriptsUserVerifyTotp));
 
@@ -67,7 +67,8 @@ const sassMgr = function () {
     return gulp.src([
         'source/sass/mgr/twofactorx.scss',
     ])
-        .pipe(sass().on('error', sass.logError))
+        .pipe(sass()
+            .on('error', sass.logError))
         .pipe(postcss([
             autoprefixer()
         ]))
@@ -85,7 +86,7 @@ const sassMgr = function () {
         .pipe(rename({
             suffix: '.min'
         }))
-        .pipe(footer('\n' + banner, {pkg: pkg}))
+        .pipe(footer('\n' + banner, { pkg: pkg }))
         .pipe(gulp.dest('assets/components/twofactorx/css/mgr/'))
 };
 gulp.task('sass', gulp.series(sassMgr));
@@ -94,21 +95,21 @@ const bumpCopyright = function () {
     return gulp.src([
         'core/components/twofactorx/model/twofactorx/twofactorx.class.php',
         'core/components/twofactorx/src/TwoFactorX.php',
-    ], {base: './'})
+    ], { base: './' })
         .pipe(replace(/Copyright 2023(-\d{4})? by/g, 'Copyright ' + (year > 2023 ? '2023-' : '') + year + ' by'))
         .pipe(gulp.dest('.'));
 };
 const bumpVersion = function () {
     return gulp.src([
         'core/components/twofactorx/src/TwoFactorX.php',
-    ], {base: './'})
+    ], { base: './' })
         .pipe(replace(/version = '\d+\.\d+\.\d+-?[0-9a-z]*'/ig, 'version = \'' + pkg.version + '\''))
         .pipe(gulp.dest('.'));
 };
 const bumpDocs = function () {
     return gulp.src([
-        'mkdocs.yml',
-    ], {base: './'})
+        'zensical.toml',
+    ], { base: './' })
         .pipe(replace(/&copy; 2023(-\d{4})?/g, '&copy; ' + (year > 2023 ? '2023-' : '') + year))
         .pipe(gulp.dest('.'));
 };
