@@ -3,7 +3,7 @@
  * TwoFactorX
  *
  * Copyright 2014-2023 by Mina Gerges <gerges.mina@gmail.com>
- * Copyright 2023-2025 by Thomas Jakobi <office@treehillstudio.com>
+ * Copyright 2023-2026 by Thomas Jakobi <office@treehillstudio.com>
  *
  * @package twofactorx
  * @subpackage classfile
@@ -40,7 +40,7 @@ class TwoFactorX
      * The version
      * @var string $version
      */
-    public string $version = '1.1.2';
+    public string $version = '1.1.3';
 
     /**
      * The class options
@@ -422,7 +422,7 @@ class TwoFactorX
     public function getUserTotpStatus()
     {
         $userSettings = $this->user->getSettings();
-        $this->userSettings['totp_disabled'] = $userSettings['totp_disabled'] === '1';
+        $this->userSettings['totp_disabled'] = (isset($userSettings['totp_disabled'])) ? $userSettings['totp_disabled'] === '1' : false;
         if ($this->isUserTotpDisabled()) {
             if ($this->getOption('debug')) {
                 $this->modx->log(xPDO::LOG_LEVEL_ERROR, "User setting totp_disabled loaded for user: $this->userName ($this->userId)", '', 'TwoFactorX');
