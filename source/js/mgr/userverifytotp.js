@@ -15,7 +15,7 @@ Ext.onReady(function () {
         }, {
             layout: 'column',
             items: [{
-                columnWidth: .5,
+                columnWidth: 0.5,
                 layout: 'form',
                 items: [{
                     style: 'margin-top: 15px; width: 200px; height: 200px;',
@@ -23,7 +23,7 @@ Ext.onReady(function () {
                         '<img id="verifytotp-qrcode" class="twofactorx-loading" src="" alt="' + _('twofactorx.qrcode') + '" width="200" height="200"/>'
                 }]
             }, {
-                columnWidth: .5,
+                columnWidth: 0.5,
                 layout: 'form',
                 items: [{
                     xtype: 'field',

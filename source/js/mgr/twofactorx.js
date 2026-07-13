@@ -15,9 +15,9 @@ Ext.reg('twofactorx', twofactorx);
 var TwoFactorX = new twofactorx();
 
 TwoFactorX.util = {
-    urlTpl: new Ext.XTemplate('<tpl for=".">'
-        + '{connector_url}?action={action}&accountname={accountname}&secret={secret}&issuer={issuer}&HTTP_MODAUTH={site_id}'
-        + '</tpl>', {
+    urlTpl: new Ext.XTemplate('<tpl for=".">' +
+        '{connector_url}?action={action}&accountname={accountname}&secret={secret}&issuer={issuer}&HTTP_MODAUTH={site_id}' +
+        '</tpl>', {
         compiled: true
     }),
     getUserSettings: function () {
