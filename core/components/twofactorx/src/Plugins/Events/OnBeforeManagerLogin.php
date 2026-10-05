@@ -17,7 +17,7 @@ class OnBeforeManagerLogin extends Plugin
      */
     public function process()
     {
-        $username = $_POST['username'];
+        $username = $this->scriptProperties['username'];
         $code = $_POST['code'];
 
         $this->twofactorx->loadUserByName($username);

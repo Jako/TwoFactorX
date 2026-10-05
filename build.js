@@ -197,14 +197,6 @@ async function taskSass() {
     );
 }
 
-async function taskImages() {
-    console.log('Copying images...');
-    const isImage = function (fileName) {
-        return /\.(png|jpg|gif|svg)$/i.test(fileName);
-    };
-    await copyFolderRecursive('source/img', 'assets/components/twofactorx/img', isImage);
-}
-
 const action = process.argv[2];
 if (action === 'bump') {
     taskBump();
@@ -215,8 +207,6 @@ if (action === 'bump') {
     taskUserVerifyTotpScripts();
 } else if (action === 'sass') {
     taskSass();
-} else if (action === 'images') {
-    taskImages();
 } else {
     // Default: Beides ausführen
     taskBump()
@@ -224,8 +214,7 @@ if (action === 'bump') {
         .then(() => taskUserTabScripts())
         .then(() => taskUserProfileScripts())
         .then(() => taskUserVerifyTotpScripts())
-        .then(() => taskSass())
-        .then(() => taskImages());
+        .then(() => taskSass());
 }
 
 console.log('Done!');
