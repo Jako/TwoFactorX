@@ -6,8 +6,11 @@
  * @subpackage build
  *
  * @var array $options
- * @var xPDOObject $object
+ * @var xPDOTransport $transport
  */
+
+/** @var modX $modx */
+$modx = $transport->xpdo;
 
 $success = true;
 
@@ -104,78 +107,71 @@ function checkPolicy($criteria, $target, $user)
     }
 }
 
-if ($object->xpdo) {
-    /** @var xPDO $modx */
-    $modx = &$object->xpdo;
+switch ($options[xPDOTransport::PACKAGE_ACTION]) {
+    case xPDOTransport::ACTION_INSTALL:
+        if (!meetsRequirements()) {
+            $modx->log(modX::LOG_LEVEL_ERROR, 'Installation requirements not met: OpenSSL encryption/decryption failed.');
+            $success = false;
+            break;
+        }
+        setEncrptKeySetting();
 
-    switch ($options[xPDOTransport::PACKAGE_ACTION]) {
-        case xPDOTransport::ACTION_INSTALL:
-            if (!meetsRequirements()) {
-                $modx->log(modX::LOG_LEVEL_ERROR, 'Installation requirements not met: OpenSSL encryption/decryption failed.');
-                $success = false;
-                break;
-            }
-            setEncrptKeySetting();
-
-            if ($options['notify_by_email']) { /* Email all manager users */
-                $modx->getService('lexicon', 'modLexicon');
-                $modx->log(modX::LOG_LEVEL_WARN, 'Start sending emails to users with manager access ...');
-                /** @var modContext $mgrContext */
-                $mgrContext = $modx->getObject('modContext', [
-                    'key' => 'mgr'
-                ]);
-                /** @var modUser[] $users */
-                $users = $modx->getCollection('modUser');
-                foreach ($users as $user) {
-                    if (checkPolicy('frames', $mgrContext, $user)) {
-                        // Get body and subject for each user manager language
-                        $mgrLanguage = $user->getOption('manager_language', [], 'en');
-                        $modx->lexicon->load('twofactorx:email', $mgrLanguage);
-                        $subject = $modx->lexicon('twofactorx.notifyemail_subject');
-                        $body = $modx->lexicon('twofactorx.notifyemail_body', [
-                            'username' => $user->get('username'),
-                        ]);
-                        $body = '<html><body>' . $body . '</body></html>';
-                        if ($user->sendEmail($body, [
-                            'subject' => $subject
-                        ])) {
-                            $modx->log(modX::LOG_LEVEL_INFO, "Email sent to user: {$user->get('username')} ({$user->get('id')})");
-                        } else {
-                            $modx->log(modX::LOG_LEVEL_WARN, "Sending email to user failed: {$user->get('username')} ({$user->get('id')})");
-                        }
+        if ($options['notify_by_email']) { /* Email all manager users */
+            $modx->getService('lexicon', 'modLexicon');
+            $modx->log(modX::LOG_LEVEL_WARN, 'Start sending emails to users with manager access ...');
+            /** @var modContext $mgrContext */
+            $mgrContext = $modx->getObject('modContext', [
+                'key' => 'mgr'
+            ]);
+            /** @var modUser[] $users */
+            $users = $modx->getCollection('modUser');
+            foreach ($users as $user) {
+                if (checkPolicy('frames', $mgrContext, $user)) {
+                    // Get body and subject for each user manager language
+                    $mgrLanguage = $user->getOption('manager_language', [], 'en');
+                    $modx->lexicon->load('twofactorx:email', $mgrLanguage);
+                    $subject = $modx->lexicon('twofactorx.notifyemail_subject');
+                    $body = $modx->lexicon('twofactorx.notifyemail_body', [
+                        'username' => $user->get('username'),
+                    ]);
+                    $body = '<html><body>' . $body . '</body></html>';
+                    if ($user->sendEmail($body, [
+                        'subject' => $subject
+                    ])) {
+                        $modx->log(modX::LOG_LEVEL_INFO, "Email sent to user: {$user->get('username')} ({$user->get('id')})");
+                    } else {
+                        $modx->log(modX::LOG_LEVEL_WARN, "Sending email to user failed: {$user->get('username')} ({$user->get('id')})");
                     }
                 }
             }
-            if ($options['enable_2fa']) {
-                $setting = $modx->getObject('modSystemSetting', 'twofactorx.enable_2fa');
-                if ($setting) {
-                    $setting->set('value', 1);
-                    $setting->save();
-                    $modx->log(xPDO::LOG_LEVEL_WARN, 'Two-factor authentication enabled.');
-                    $modx->cacheManager->refresh([
-                        'system_settings' => []
-                    ]);
-                    $modx->log(xPDO::LOG_LEVEL_INFO, 'Refreshing system settings cache ...');
-                }
+        }
+        if ($options['enable_2fa']) {
+            $setting = $modx->getObject('modSystemSetting', 'twofactorx.enable_2fa');
+            if ($setting) {
+                $setting->set('value', 1);
+                $setting->save();
+                $modx->log(xPDO::LOG_LEVEL_WARN, 'Two-factor authentication enabled.');
+                $modx->cacheManager->refresh([
+                    'system_settings' => []
+                ]);
+                $modx->log(xPDO::LOG_LEVEL_INFO, 'Refreshing system settings cache ...');
             }
+        }
 
-            $success = true;
+        $success = true;
+        break;
+    case xPDOTransport::ACTION_UPGRADE:
+        if (!meetsRequirements()) {
+            $modx->log(modX::LOG_LEVEL_ERROR, 'Installation requirements not met: OpenSSL encryption/decryption failed.');
+            $success = false;
             break;
+        }
+        setEncrptKeySetting();
 
-        case xPDOTransport::ACTION_UPGRADE:
-            if (!meetsRequirements()) {
-                $modx->log(modX::LOG_LEVEL_ERROR, 'Installation requirements not met: OpenSSL encryption/decryption failed.');
-                $success = false;
-                break;
-            }
-            setEncrptKeySetting();
-
-            $success = true;
-            break;
-
-        case xPDOTransport::ACTION_UNINSTALL:
-            $success = true;
-            break;
-    }
-    return $success;
+        $success = true;
+        break;
+    case xPDOTransport::ACTION_UNINSTALL:
+        $success = true;
+        break;
 }
+return $success;
