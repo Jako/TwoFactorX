@@ -1,6 +1,7 @@
 {
   "name": "treehillstudio/twofactorx",
   "description": "Two-factor authentication for MODX",
+  "version": "1.1.4",
   "authors": [
     {
       "name": "Mina Gerges",
