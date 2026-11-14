@@ -32,7 +32,9 @@ abstract class Processor extends modProcessor
         parent::__construct($modx, $properties);
 
         $corePath = $this->modx->getOption('twofactorx.core_path', null, $this->modx->getOption('core_path') . 'components/twofactorx/');
-        $this->twofactorx = $this->modx->getService('agenda', TwoFactorX::class, $corePath . 'model/twofactorx/');
+        $this->twofactorx = $this->modx->getService('twofactorx', TwoFactorX::class, $corePath . 'model/twofactorx/', [
+            'core_path' => $corePath
+        ]);
     }
 
     /**
@@ -45,6 +47,24 @@ abstract class Processor extends modProcessor
     }
 
     abstract public function process();
+
+    /**
+     * Get the error info of the MODX mailer service, if it is available.
+     *
+     * The mail service is $modx->mail in MODX 2.x and part of $modx->services in MODX 3.x.
+     *
+     * @return string
+     */
+    public function getMailErrorInfo(): string
+    {
+        $mail = null;
+        if (isset($this->modx->services) && $this->modx->services->has('mail')) {
+            $mail = $this->modx->services->get('mail');
+        } elseif (isset($this->modx->mail)) {
+            $mail = $this->modx->mail;
+        }
+        return ($mail && isset($mail->mailer)) ? (string)$mail->mailer->ErrorInfo : '';
+    }
 
     /**
      * Get a boolean property.

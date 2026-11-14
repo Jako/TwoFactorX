@@ -14,18 +14,15 @@ $modx = $transport->xpdo;
 
 $success = true;
 
-function meetsRequirements()
-{
+$meetsRequirements = function () {
     $result = true;
     if (!function_exists('openssl_encrypt') || !function_exists('openssl_decrypt')) {
         $result = false;
     }
     return $result;
-}
+};
 
-function setEncrptKeySetting()
-{
-    global $modx;
+$setEncrptKeySetting = function () use ($modx) {
     $setting = $modx->getObject('modSystemSetting', [
         'key' => 'twofactorx.encryption_key'
     ]);
@@ -41,11 +38,16 @@ function setEncrptKeySetting()
         ]);
         $setting->save();
     } else if (!preg_match('/^[0-9A-Fa-f]{64}$/', $setting->get('value'))) {
-        $modx->log(modX::LOG_LEVEL_ERROR, "Invalid encryption key in system setting, regenerating key!");
-        $setting->set('value', bin2hex(openssl_random_pseudo_bytes(32)));
-        $setting->save();
+        if ($modx->getCount('modUserProfile', ['extended:LIKE' => '%"twofactorx":{%'])) {
+            // A new key would make the stored secrets unreadable
+            $modx->log(modX::LOG_LEVEL_ERROR, "Invalid encryption key in system setting, but users have stored TwoFactorX data. Restore the previous encryption key!");
+        } else {
+            $modx->log(modX::LOG_LEVEL_WARN, "Invalid encryption key in system setting, regenerating key!");
+            $setting->set('value', bin2hex(openssl_random_pseudo_bytes(32)));
+            $setting->save();
+        }
     }
-}
+};
 
 /**
  * Determine if the user attributes satisfy an object policy
@@ -57,8 +59,7 @@ function setEncrptKeySetting()
  * @param modUser $user
  * @return boolean
  **/
-function checkPolicy($criteria, $target, $user)
-{
+$checkPolicy = function ($criteria, $target, $user) {
     if (!$user) {
         return false;
     }
@@ -105,16 +106,16 @@ function checkPolicy($criteria, $target, $user)
         }
         return false;
     }
-}
+};
 
 switch ($options[xPDOTransport::PACKAGE_ACTION]) {
     case xPDOTransport::ACTION_INSTALL:
-        if (!meetsRequirements()) {
+        if (!$meetsRequirements()) {
             $modx->log(modX::LOG_LEVEL_ERROR, 'Installation requirements not met: OpenSSL encryption/decryption failed.');
             $success = false;
             break;
         }
-        setEncrptKeySetting();
+        $setEncrptKeySetting();
 
         if ($options['notify_by_email']) { /* Email all manager users */
             $modx->getService('lexicon', 'modLexicon');
@@ -126,10 +127,13 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
             /** @var modUser[] $users */
             $users = $modx->getCollection('modUser');
             foreach ($users as $user) {
-                if (checkPolicy('frames', $mgrContext, $user)) {
+                if ($checkPolicy('frames', $mgrContext, $user)) {
                     // Get body and subject for each user manager language
-                    $mgrLanguage = $user->getOption('manager_language', [], 'en');
-                    $modx->lexicon->load('twofactorx:email', $mgrLanguage);
+                    // The manager language of the user, the lexicon is loaded with a language prefix,
+                    // otherwise a topic loaded once is not loaded again in another language
+                    $userSettings = $user->getSettings();
+                    $mgrLanguage = !empty($userSettings['manager_language']) ? $userSettings['manager_language'] : $modx->getOption('manager_language', null, $modx->getOption('cultureKey', null, 'en'), true);
+                    $modx->lexicon->load($mgrLanguage . ':twofactorx:email');
                     $subject = $modx->lexicon('twofactorx.notifyemail_subject');
                     $body = $modx->lexicon('twofactorx.notifyemail_body', [
                         'username' => $user->get('username'),
@@ -161,12 +165,12 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         $success = true;
         break;
     case xPDOTransport::ACTION_UPGRADE:
-        if (!meetsRequirements()) {
+        if (!$meetsRequirements()) {
             $modx->log(modX::LOG_LEVEL_ERROR, 'Installation requirements not met: OpenSSL encryption/decryption failed.');
             $success = false;
             break;
         }
-        setEncrptKeySetting();
+        $setEncrptKeySetting();
 
         $success = true;
         break;

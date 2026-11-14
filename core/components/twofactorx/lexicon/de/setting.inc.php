@@ -7,7 +7,7 @@
  */
 $_lang['setting_twofactorx.debug'] = 'Debug';
 $_lang['setting_twofactorx.debug_desc'] = 'Debug-Informationen im MODX Fehlerprotokoll ausgeben.';
-$_lang['setting_twofactorx.enable_2fa'] = 'Aktivieren Sie die Zwei-Faktor-Authentifizierung';
+$_lang['setting_twofactorx.enable_2fa'] = 'Zwei-Faktor-Authentifizierung aktivieren';
 $_lang['setting_twofactorx.enable_2fa_desc'] = 'Wenn Sie die Zwei-Faktor-Authentifizierung aktivieren, wird der Manager-Login mit einem zusätzlichen TOTP-Authentifizierungscode gesichert.';
 $_lang['setting_twofactorx.encryption_key'] = 'Verschlüsselungsschlüssel';
 $_lang['setting_twofactorx.encryption_key_desc'] = 'Verschlüsselungsschlüssel, mit dem die 2FA-Daten verschlüsselt werden. Nicht ändern.';

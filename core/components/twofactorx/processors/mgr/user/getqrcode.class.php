@@ -16,7 +16,9 @@ class TwoFactorXUserGetQRCodeProcessor extends Processor
     {
         $userid = $this->modx->user->get('id');
 
-        $this->twofactorx->loadUserByID($userid);
+        if (!$this->twofactorx->loadUserByID($userid)) {
+            return $this->modx->error->failure($this->modx->lexicon('twofactorx.error_user_not_found'));
+        }
         $settings = $this->twofactorx->getDecryptedSettings();
         if ($settings) {
             if ($this->twofactorx->getOption('show_in_profile') || $settings['verifytotp'] == 'yes') {

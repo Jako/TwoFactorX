@@ -12,6 +12,10 @@ class OnUserFormPrerender extends Plugin
 {
     public function process()
     {
+        // A new user has no ID yet, the two-factor authentication can be managed after saving the user
+        if (($this->scriptProperties['mode'] ?? '') === 'new') {
+            return;
+        }
         if ($this->modx->hasPermission('twofactorx_edit')) {
             $assetsUrl = $this->twofactorx->getOption('assetsUrl');
             $jsUrl = $this->twofactorx->getOption('jsUrl') . 'mgr/';

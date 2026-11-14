@@ -1,7 +1,7 @@
 {
   "name": "treehillstudio/twofactorx",
   "description": "Two-factor authentication for MODX",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "authors": [
     {
       "name": "Mina Gerges",
@@ -24,7 +24,7 @@
     "php": ">=7.4",
     "ext-openssl": "*",
     "ext-json": "*",
-    "phpgangsta/googleauthenticator": "dev-master",
+    "phpgangsta/googleauthenticator": "dev-master#505c2af8337b559b33557f37cda38e5f843f3768",
     "endroid/qr-code": "^4.6"
   },
   "autoload": {

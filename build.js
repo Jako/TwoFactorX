@@ -152,6 +152,13 @@ async function taskBump() {
             replace: apiReplace
         }], 'daterange in');
     }
+    await replaceInFile('docs/index.md', [{
+        search: /[*-] MODX Revolution \d.\d.*/g,
+        replace: '* MODX Revolution ' + modxversion + '+'
+    }, {
+        search: /[*-] PHP (v)?\d.\d.*/g,
+        replace: '* PHP ' + phpversion + '+'
+    }], 'requirements in');
     await replaceInFile('core/components/twofactorx/composer.json', [{
         search: /"php": "\d.\d.*?"/g,
         replace: '"php": "' + phpversion + '"'

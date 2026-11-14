@@ -40,7 +40,7 @@ class TwoFactorX
      * The version
      * @var string $version
      */
-    public string $version = '1.1.4';
+    public string $version = '1.1.5';
 
     /**
      * The class options
@@ -62,12 +62,18 @@ class TwoFactorX
 
     /** @var string $cipherMethod */
     private string $cipherMethod = 'AES-256-CBC';
-    /** @var int $cipherOptions */
-    private int $cipherOptions = OPENSSL_RAW_DATA & OPENSSL_ZERO_PADDING;
+    /**
+     * The cipher options, 0 returns base64 encoded data with PKCS#7 padding. The stored data is encrypted with
+     * these options, so they must not be changed.
+     * @var int $cipherOptions
+     */
+    private int $cipherOptions = 0;
     /** @var string $encryptionKey */
     private $encryptionKey;
     /**  @var string $userIV */
     private string $userIV;
+    /** @var bool $encryptionKeyValid */
+    private bool $encryptionKeyValid = true;
 
     /**
      * TwoFactorX constructor
@@ -182,15 +188,33 @@ class TwoFactorX
     }
 
     /**
+     * Does the code match the secret of the user? A code can be used only once, a code of the same or an
+     * earlier time slice as the last used code does not match.
+     *
      * @param $code
+     * @param bool $markUsed Mark the time slice of a matching code as used
      * @return bool
      */
-    public function userCodeMatch($code): bool
+    public function userCodeMatch($code, bool $markUsed = true): bool
     {
-        $secret = $this->userSettings['secret'];
+        if (!$this->encryptionKeyValid) {
+            // The stored secrets can't be decrypted, so no code can match
+            return false;
+        }
+        $secret = $this->userSettings['secret'] ?? '';
         if ($secret) { // Secret found
             $otp = $this->ga->getCode($secret); // Recalculated for logging
-            if ($this->ga->verifyCode($secret, $code, 2)) {
+            $timeSlice = $this->ga->getMatchingTimeSlice($secret, $code, 2);
+            if ($timeSlice !== null && $timeSlice <= (int)($this->userSettings['lastslice'] ?? 0)) {
+                if ($this->getOption('debug')) {
+                    $this->modx->log(xPDO::LOG_LEVEL_ERROR, "Code already used by user: $this->userName ($this->userId)", '', 'TwoFactorX');
+                }
+                return false;
+            } elseif ($timeSlice !== null) {
+                if ($markUsed) {
+                    $this->userSettings['lastslice'] = $timeSlice;
+                    $this->saveUserSettings();
+                }
                 return true;
             } else {
                 if ($this->getOption('debug')) {
@@ -211,9 +235,68 @@ class TwoFactorX
     }
 
     /**
+     * Is the loaded user blocked, i.e. after too many failed login attempts?
+     *
+     * @return bool
+     */
+    public function isUserBlocked(): bool
+    {
+        if (!$this->user) {
+            return false;
+        }
+        $profile = $this->user->getOne('Profile');
+        if (!$profile) {
+            return false;
+        }
+        return $profile->get('blocked') ||
+            $profile->get('blockeduntil') > time() ||
+            ($profile->get('blockedafter') > 0 && $profile->get('blockedafter') < time());
+    }
+
+    /**
+     * Does the password match the password of the loaded user?
+     *
+     * @param string $password
+     * @return bool
+     */
+    public function userPasswordMatches($password): bool
+    {
+        return $this->user && is_string($password) && $password !== '' && $this->user->passwordMatches($password);
+    }
+
+    /**
+     * Count a wrong authentication code as failed login attempt and block the user
+     * like MODX does after too many failed login attempts.
+     *
+     * @return void
+     */
+    public function registerFailedCode()
+    {
+        if (!$this->user || !$this->encryptionKeyValid) {
+            return;
+        }
+        $profile = $this->user->getOne('Profile');
+        if (!$profile) {
+            return;
+        }
+        $failedLoginCount = (int)$profile->get('failedlogincount') + 1;
+        $profile->set('failedlogincount', $failedLoginCount);
+        if ($failedLoginCount >= (int)$this->modx->getOption('failed_login_attempts', null, 5)) {
+            $profile->set('blockeduntil', time() + (60 * (int)$this->modx->getOption('blocked_minutes', null, 60)));
+            if ($this->getOption('debug')) {
+                $this->modx->log(xPDO::LOG_LEVEL_ERROR, "User blocked after too many failed authentication codes: $this->userName ($this->userId)", '', 'TwoFactorX');
+            }
+        }
+        $profile->save();
+    }
+
+    /**
      */
     public function resetSecret()
     {
+        if (!$this->user || !$this->encryptionKeyValid) {
+            return;
+        }
         $profile = $this->user->getOne('Profile');
         $extended = $profile->get('extended');
         if (isset($extended['twofactorx'])) {
@@ -256,6 +339,7 @@ class TwoFactorX
             $this->user = null;
             $this->userName = '';
             $this->userId = 0;
+            $this->userSettings = [];
             return false;
         }
     }
@@ -284,6 +368,7 @@ class TwoFactorX
             $this->user = null;
             $this->userName = '';
             $this->userId = 0;
+            $this->userSettings = [];
             return false;
         }
     }
@@ -302,6 +387,18 @@ class TwoFactorX
      */
     private function getUserSettings()
     {
+        if (!$this->encryptionKeyValid) {
+            // The stored data can't be decrypted. The user is not in the verify TOTP mode,
+            // so a login with an enabled two-factor authentication is refused.
+            $this->userSettings = [
+                'verifytotp' => 'no',
+                'secret' => '',
+                'uri' => '',
+                'iv' => '',
+            ];
+            $this->userSettings['totp_disabled'] = $this->getUserTotpStatus();
+            return;
+        }
         $profile = $this->user->getOne('Profile');
         $extended = $profile->get('extended');
         $userSettings = null;
@@ -309,7 +406,7 @@ class TwoFactorX
             $userSettings = $extended['twofactorx'];
         }
         if (is_array($userSettings)) { // Extended field container in place, we load settings.
-            $this->userIV = base64_decode($userSettings['iv']);
+            $this->userIV = base64_decode($userSettings['iv'] ?? '');
             // Validate IV to avoid php warning
             if (strlen(bin2hex($this->userIV)) / 2 != 16) {
                 $this->userIV = $this->generateIV();
@@ -371,7 +468,7 @@ class TwoFactorX
      */
     private function saveUserSettings()
     {
-        if ($this->user) {
+        if ($this->user && $this->encryptionKeyValid) {
             $profile = $this->user->getOne('Profile');
             $extended = $profile->get('extended');
             $extended['twofactorx'] = $this->getEncryptedArray();
@@ -402,6 +499,7 @@ class TwoFactorX
                 'verifytotp' => 'yes',
                 'secret' => $secret,
                 'uri' => $uri,
+                'lastslice' => 0,
                 'iv' => base64_encode($this->userIV),
             ];
             $this->userSettings['totp_disabled'] = $this->getUserTotpStatus();
@@ -421,6 +519,9 @@ class TwoFactorX
      */
     public function getUserTotpStatus()
     {
+        if (!$this->user) {
+            return false;
+        }
         $userSettings = $this->user->getSettings();
         $this->userSettings['totp_disabled'] = (isset($userSettings['totp_disabled'])) ? $userSettings['totp_disabled'] === '1' : false;
         if ($this->isUserTotpDisabled()) {
@@ -466,6 +567,9 @@ class TwoFactorX
      */
     public function setUserTotpStatus(bool $status = false)
     {
+        if (!$this->user) {
+            return;
+        }
         $userid = $this->user->get('id');
         $setting = $this->modx->getObject('modUserSetting', [
             'user' => $userid,
@@ -501,6 +605,7 @@ class TwoFactorX
             'verifytotp' => $this->encrypt($this->userSettings['verifytotp']),
             'secret' => $this->encrypt($this->userSettings['secret']),
             'uri' => $this->encrypt($this->userSettings['uri']),
+            'lastslice' => $this->encrypt((string)(int)($this->userSettings['lastslice'] ?? 0)),
             'iv' => base64_encode($this->userIV),
         ];
     }
@@ -515,6 +620,7 @@ class TwoFactorX
             'verifytotp' => $this->decrypt($this->getOption('verifytotp', $array, '')) === 'no' ? 'no' : 'yes',
             'secret' => $this->decrypt($this->getOption('secret', $array, '')),
             'uri' => $this->decrypt($this->getOption('uri', $array, '')),
+            'lastslice' => (int)$this->decrypt($this->getOption('lastslice', $array, '')),
             'iv' => $this->getOption('iv', $array, ''),
         ];
         if ($this->getOption('inonetime', $array, '')) {
@@ -549,28 +655,59 @@ class TwoFactorX
         $setting = $this->modx->getObject('modSystemSetting', [
             'key' => 'twofactorx.encryption_key'
         ]);
+        if ($setting && preg_match('/^[0-9A-Fa-f]{64}$/', $setting->get('value'))) {
+            // The system settings cache is outdated
+            $this->encryptionKey = $setting->get('value');
+            return;
+        }
+
+        if ($this->hasStoredUserData()) {
+            // A new key would make the stored secrets unreadable. They would be reset and all users
+            // could log in once without a code. The logins with a code are refused instead.
+            $this->encryptionKeyValid = false;
+            $this->modx->log(xPDO::LOG_LEVEL_ERROR, 'The system setting twofactorx.encryption_key is missing or invalid, but users have stored TwoFactorX data. Restore the previous encryption key! Until then, logins that require an authentication code are refused.', '', 'TwoFactorX');
+            return;
+        }
+
         if (!$setting) {
             $setting = $this->modx->newObject('modSystemSetting');
             $setting->set('key', 'twofactorx.encryption_key');
             $setting->fromArray([
-                'value' => bin2hex(openssl_random_pseudo_bytes(32)),
                 'xtype' => 'text-password',
                 'namespace' => 'twofactorx',
                 'area' => 'system'
             ]);
-            $setting->save();
-            if ($this->getOption('debug')) {
-                $this->modx->log(xPDO::LOG_LEVEL_ERROR, 'Created encryption key in system settings!', '', 'TwoFactorX');
-            }
         }
-        if (!preg_match('/^[0-9A-Fa-f]{64}$/', $setting->get('value'))) {
-            $setting->set('value', bin2hex(openssl_random_pseudo_bytes(32)));
-            $setting->save();
-            if ($this->getOption('debug')) {
-                $this->modx->log(xPDO::LOG_LEVEL_ERROR, 'Invalid encryption key in system settings! Value was reset.', '', 'TwoFactorX');
-            }
+        $setting->set('value', bin2hex(openssl_random_pseudo_bytes(32)));
+        if ($setting->save()) {
+            $this->modx->cacheManager->refresh(['system_settings' => []]);
+            $this->modx->log(xPDO::LOG_LEVEL_ERROR, 'Generated a new encryption key in the system setting twofactorx.encryption_key.', '', 'TwoFactorX');
+        } else {
+            $this->modx->log(xPDO::LOG_LEVEL_ERROR, 'Could not save a new encryption key in the system setting twofactorx.encryption_key.', '', 'TwoFactorX');
         }
         $this->encryptionKey = $setting->get('value');
+    }
+
+    /**
+     * Has any user stored TwoFactorX data, that is encrypted with the encryption key?
+     *
+     * @return bool
+     */
+    private function hasStoredUserData(): bool
+    {
+        return (bool)$this->modx->getCount('modUserProfile', [
+            'extended:LIKE' => '%"twofactorx":{%'
+        ]);
+    }
+
+    /**
+     * Can the stored data be encrypted/decrypted with the encryption key?
+     *
+     * @return bool
+     */
+    public function isEncryptionKeyValid(): bool
+    {
+        return $this->encryptionKeyValid;
     }
 
     /**

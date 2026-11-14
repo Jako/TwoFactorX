@@ -12,8 +12,10 @@ class OnManagerPageBeforeRender extends Plugin
 {
     public function process()
     {
-        $options = $this->twofactorx->options;
-        unset($options['encryption_key']);
+        // Only the options used by the javascript, so no server paths or keys are output
+        $options = [
+            'connectorUrl' => $this->twofactorx->getOption('connectorUrl'),
+        ];
 
         $assetsUrl = $this->twofactorx->getOption('assetsUrl');
         $jsUrl = $this->twofactorx->getOption('jsUrl') . 'mgr/';
@@ -31,7 +33,7 @@ class OnManagerPageBeforeRender extends Plugin
         }
         $this->modx->controller->addHtml('<script type="text/javascript">
             Ext.onReady(function() {
-                TwoFactorX.config = ' . json_encode($options, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . ';
+                TwoFactorX.config = ' . json_encode($options, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) . ';
             });
         </script>');
 
@@ -43,7 +45,6 @@ class OnManagerPageBeforeRender extends Plugin
             } else {
                 $this->modx->controller->addLastJavascript($jsUrl . 'userverifytotp.min.js?v=v' . $this->twofactorx->version);
             }
-            $this->twofactorx->setVerfyTotpStatus('yes');
         }
 
         if ($this->modx->request->action == 'security/profile' && $this->twofactorx->getOption('show_in_profile')) {

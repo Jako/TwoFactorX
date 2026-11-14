@@ -16,12 +16,14 @@ class TwoFactorXEmailInstructionsProcessor extends Processor
     {
         $userid = $this->getProperty('id');
 
-        $this->twofactorx->loadUserByID($userid);
+        if (!$this->twofactorx->loadUserByID($userid)) {
+            return $this->modx->error->failure($this->modx->lexicon('twofactorx.error_user_not_found'));
+        }
         $settings = $this->twofactorx->getDecryptedSettings();
         if ($settings) {
             $user = $this->modx->getObject('modUser', $userid);
             $mgrLanguage = $this->getUserSetting($user->get('id'), 'manager_language');
-            $mgrLanguage = $mgrLanguage ??  $this->modx->getOption('cultureKey');
+            $mgrLanguage = $mgrLanguage ?: $this->modx->getOption('cultureKey');
             $this->modx->lexicon->load($mgrLanguage . ':twofactorx:email');
             $subject = $this->modx->lexicon('twofactorx.notifyemail_subject');
             $body = $this->modx->lexicon('twofactorx.notifyemail_body', [
@@ -31,7 +33,7 @@ class TwoFactorXEmailInstructionsProcessor extends Processor
             if (!$user->sendEmail($body, [
                 'subject' => $subject
             ])) {
-                return $this->modx->error->failure($this->modx->lexicon('twofactorx.email_fail') . $this->modx->mail->mailer->ErrorInfo);
+                return $this->modx->error->failure($this->modx->lexicon('twofactorx.email_fail') . $this->getMailErrorInfo());
             }
             return $this->modx->error->success($this->modx->lexicon('twofactorx.email_success'));
         } else {

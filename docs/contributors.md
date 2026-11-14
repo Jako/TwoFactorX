@@ -1,5 +1,5 @@
 The TwoFactorX project was started in 2023 by [Thomas
-Jakobi](https://github.com/jako) as a complete rewite of the GoogleAuthenticatorX
+Jakobi](https://github.com/jako) as a complete rewrite of the GoogleAuthenticatorX
 package by [Mina Gerges](https://github.com/minagerges).
 
 ## Reasons for the fork
@@ -12,7 +12,7 @@ generation.
 The name change was made because the authentication code can be used with other
 two-factor authentication applications such as Authy, 1Password etc.
 
-The other code changes are the follwing:
+The other code changes are the following:
 
 * MODX 3 compatibility
 * code simplification
@@ -23,3 +23,12 @@ The other code changes are the follwing:
 
 Many thanks to all who contributed, whether by creating pull requests,
 submitting bug reports, or donating.
+
+## Donate
+
+If TwoFactorX is useful for you and you want to support its further development,
+you can make a donation via:
+
+- [GitHub Sponsors](https://github.com/sponsors/Jako)
+- [Open Collective](https://opencollective.com/treehillstudio)
+- [Ko-fi](https://ko-fi.com/treehillstudio)

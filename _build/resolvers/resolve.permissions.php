@@ -35,8 +35,7 @@ $accessPolicies = [
  * @param string $permission
  * @return bool
  */
-function createAccessPermission($modx, $policy, $template, $permission)
-{
+$createAccessPermission = function ($modx, $policy, $template, $permission) {
     /** @var modAccessPolicyTemplate $accessPolicyTemplate */
     if (!$accessPolicyTemplate = $modx->getObject('modAccessPolicyTemplate', [
         'name' => $template['name']
@@ -94,7 +93,7 @@ function createAccessPermission($modx, $policy, $template, $permission)
     }
     $accessPermission->save();
     return true;
-}
+};
 
 /**
  * @param modX $modx
@@ -103,8 +102,7 @@ function createAccessPermission($modx, $policy, $template, $permission)
  * @param string $permission
  * @return bool
  */
-function removeAccessPermission($modx, $policy, $template, $permission)
-{
+$removeAccessPermission = function ($modx, $policy, $template, $permission) {
     /** @var modAccessPermission $accessPermission */
     if ($accessPolicy = $modx->getObject('modAccessPolicy', ['name' => $policy['name']])) {
         $accessPolicy->remove();
@@ -121,7 +119,7 @@ function removeAccessPermission($modx, $policy, $template, $permission)
         $modx->log(xPDO::LOG_LEVEL_INFO, 'Access Permission "' . $permission . '" removed.');
     }
     return true;
-}
+};
 
 $success = true;
 if ($object->xpdo) {
@@ -132,7 +130,7 @@ if ($object->xpdo) {
         case xPDOTransport::ACTION_UPGRADE:
             foreach ($accessPolicies as $accessPolicy) {
                 foreach ($accessPolicy['permissions'] as $accessPermission) {
-                    $result = createAccessPermission($modx, $accessPolicy['policy'], $accessPolicy['template'], $accessPermission);
+                    $result = $createAccessPermission($modx, $accessPolicy['policy'], $accessPolicy['template'], $accessPermission);
                     $success = $success && $result;
                 }
             }
@@ -141,7 +139,7 @@ if ($object->xpdo) {
         case xPDOTransport::ACTION_UNINSTALL:
             foreach ($accessPolicies as $accessPolicy) {
                 foreach ($accessPolicy['permissions'] as $accessPermission) {
-                    $result = removeAccessPermission($modx, $accessPolicy['policy'], $accessPolicy['template'], $accessPermission);
+                    $result = $removeAccessPermission($modx, $accessPolicy['policy'], $accessPolicy['template'], $accessPermission);
                     $success = $success && $result;
                 }
             }

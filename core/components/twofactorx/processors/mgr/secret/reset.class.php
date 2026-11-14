@@ -16,7 +16,9 @@ class TwoFactorXSecretResetProcessor extends Processor
     {
         $userid = $this->getProperty('id');
 
-        $this->twofactorx->loadUserByID($userid);
+        if (!$this->twofactorx->loadUserByID($userid)) {
+            return $this->modx->error->failure($this->modx->lexicon('twofactorx.error_user_not_found'));
+        }
         $this->twofactorx->resetSecret();
 
         return $this->modx->error->success($this->modx->lexicon('twofactorx.secret_reset'));

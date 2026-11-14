@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.5] - 2026-11-14
+
+### Security
+
+- Check the code in the TwoFactorXLogin hook for all users with enabled two-factor authentication.
+- Limit the code attempts and accept each code only once.
+- Don't reset all secrets, if the encryption key is invalid.
+- Remove the secret from the QR code URL and the server paths from the manager.
+
+### Fixed
+
+- Fix fatal errors, the GoogleAuthenticatorX migration and the email languages.
+- Hide the TwoFactorX tab on the create user page.
+
 ## [1.1.4] - 2026-10-05
 
 ### Security

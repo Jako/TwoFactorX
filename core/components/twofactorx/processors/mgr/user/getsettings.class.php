@@ -16,7 +16,9 @@ class TwoFactorXUserGetSettingsProcessor extends Processor
     {
         $userid = $this->getProperty('id');
 
-        $this->twofactorx->loadUserByID($userid);
+        if (!$this->twofactorx->loadUserByID($userid)) {
+            return $this->modx->error->failure($this->modx->lexicon('twofactorx.error_user_not_found'));
+        }
         $settings = $this->twofactorx->getDecryptedSettings();
         if ($settings) {
             $settings = array_merge($settings, [

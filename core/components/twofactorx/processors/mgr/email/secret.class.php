@@ -29,7 +29,9 @@ class TwoFactorXEmailSecretProcessor extends Processor
     {
         $userid = $this->getProperty('id');
 
-        $this->twofactorx->loadUserByID($userid);
+        if (!$this->twofactorx->loadUserByID($userid)) {
+            return $this->modx->error->failure($this->modx->lexicon('twofactorx.error_user_not_found'));
+        }
         $settings = $this->twofactorx->getDecryptedSettings();
 
         if ($settings) {
@@ -52,7 +54,8 @@ class TwoFactorXEmailSecretProcessor extends Processor
 
             /** @var modUser $user */
             $user = $this->modx->getObject('modUser', $userid);
-            $mgrLanguage = $user->getOption('manager_language');
+            // The manager language of the user, not of the current manager user or the system
+            $mgrLanguage = $this->getUserSetting($user->get('id'), 'manager_language');
             $mgrLanguage = $mgrLanguage ?: $this->modx->getOption('cultureKey');
 
             $this->modx->lexicon->load($mgrLanguage . ':twofactorx:email');
@@ -75,7 +78,7 @@ class TwoFactorXEmailSecretProcessor extends Processor
                     ]
                 ]
             ])) {
-                $errorInfo = $this->modx->mail->mailer->ErrorInfo;
+                $errorInfo = $this->getMailErrorInfo();
                 $this->modx->log(xPDO::LOG_LEVEL_ERROR, 'Failed to send mail: ' . $errorInfo);
                 return $this->modx->error->failure($this->modx->lexicon('twofactorx.email_fail') . $errorInfo);
             }
@@ -83,6 +86,21 @@ class TwoFactorXEmailSecretProcessor extends Processor
         } else {
             return $this->modx->error->failure($this->modx->lexicon('twofactorx.error_invalid_data'));
         }
+    }
+
+    /**
+     * @param string $userId
+     * @param string $settingKey
+     * @return string|null
+     */
+    private function getUserSetting($userId, $settingKey)
+    {
+        /** @var modUserSetting $userSetting */
+        $userSetting = $this->modx->getObject('modUserSetting', [
+            'user' => $userId,
+            'key' => $settingKey,
+        ]);
+        return ($userSetting) ? $userSetting->get('value') : null;
     }
 
     /**
@@ -117,7 +135,7 @@ class TwoFactorXEmailSecretProcessor extends Processor
         $mail->set(modMail::MAIL_SENDER,
             $this->modx->getOption('sender', $options, $this->modx->getOption('emailsender')));
         $mail->set(modMail::MAIL_SUBJECT,
-            $this->modx->getOption('subject', $options['subject'], $this->modx->lexicon('twofactorx.qremail_subject')));
+            $this->modx->getOption('subject', $options, $this->modx->lexicon('twofactorx.qremail_subject')));
         $mail->address('to', $profile->get('email'), $profile->get('fullname'));
         $mail->address('reply-to', $this->modx->getOption('sender', $options, $this->modx->getOption('emailsender')));
 

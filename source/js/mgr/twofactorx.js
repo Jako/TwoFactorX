@@ -16,11 +16,21 @@ var TwoFactorX = new twofactorx();
 
 TwoFactorX.util = {
     urlTpl: new Ext.XTemplate('<tpl for=".">' +
-        '{connector_url}?action={action}&accountname={accountname}&secret={secret}&issuer={issuer}&HTTP_MODAUTH={site_id}' +
+        '{connector_url}?action={action}&id={id}&HTTP_MODAUTH={site_id}&_dc={dc}' +
         '</tpl>', {
         compiled: true
     }),
     getUserSettings: function () {
+        if (!MODx.request.id) {
+            // A new user has no ID yet, the two-factor authentication can be managed after saving the user
+            ['twofactorx-btn-changestatus', 'twofactorx-btn-resetsecret', 'twofactorx-btn-emailinstructions', 'twofactorx-btn-emailqr'].forEach(function (id) {
+                var button = Ext.getCmp(id);
+                if (button) {
+                    button.disable();
+                }
+            });
+            return;
+        }
         MODx.Ajax.request({
             url: TwoFactorX.config.connectorUrl,
             params: {
@@ -38,14 +48,16 @@ TwoFactorX.util = {
                         var qrcode = document.getElementById('twofactorx-qrcode');
                         secret.setValue(r.object.secret);
                         uri.setValue(decodeURIComponent(r.object.uri));
-                        document.getElementById('twofactorx-qrcode').src = TwoFactorX.util.urlTpl.apply({
-                            connector_url: TwoFactorX.config.connectorUrl,
-                            action: 'mgr/qrcode/get',
-                            accountname: r.object.accountname,
-                            secret: r.object.secret,
-                            issuer: r.object.issuer,
-                            site_id: MODx.siteId
-                        });
+                        // A new user has no ID and no secret yet. Without an ID, the QR code of the current user would be shown.
+                        if (qrcode && MODx.request.id && r.object.secret) {
+                            qrcode.src = TwoFactorX.util.urlTpl.apply({
+                                connector_url: TwoFactorX.config.connectorUrl,
+                                action: 'mgr/qrcode/get',
+                                id: MODx.request.id,
+                                site_id: MODx.siteId,
+                                dc: new Date().getTime()
+                            });
+                        }
                         if (r.object.totp_disabled === true) {
                             changestatus.setText(_('twofactorx.enable'));
                             status.setValue(_('twofactorx.disabled'));
@@ -78,10 +90,9 @@ TwoFactorX.util = {
                         document.getElementById(image).src = TwoFactorX.util.urlTpl.apply({
                             connector_url: TwoFactorX.config.connectorUrl,
                             action: 'mgr/qrcode/get',
-                            accountname: r.object.accountname,
-                            secret: r.object.secret,
-                            issuer: r.object.issuer,
-                            site_id: MODx.siteId
+                            id: '',
+                            site_id: MODx.siteId,
+                            dc: new Date().getTime()
                         });
                     },
                     scope: this

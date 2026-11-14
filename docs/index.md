@@ -16,7 +16,7 @@ Add a two-factor authentication to MODX.
 
 ### License
 
-The project is licensed under the [GPLv2 license](https://github.com/Jako/TwoFactorX/LICENSE.md).
+The project is licensed under the [GPLv2 license](https://github.com/Jako/TwoFactorX/blob/master/LICENSE.md).
 
 ### Translations [![Default Lexicon](https://hosted.weblate.org/widget/modx-extras/twofactorx/standard/svg-badge.svg)](https://hosted.weblate.org/projects/modx-extras/twofactorx/)
 

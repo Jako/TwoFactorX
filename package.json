@@ -4,7 +4,7 @@
   "description": "Two-factor authentication for MODX",
   "author": "Thomas Jakobi <office@treehillstudio.com>",
   "private": true,
-  "version": "1.1.4",
+  "version": "1.1.5",
   "phpversion": "7.4",
   "modxversion": "2.8",
   "startYear": "2023",
